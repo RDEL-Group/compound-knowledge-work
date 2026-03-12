@@ -158,6 +158,7 @@ P3 (Nice to Fix): [count] issues
 
 Next:
   /ckw:execute-phase [N] --revisions    Apply P1 fixes
+  /ckw:publish-proof --phase [N]        Publish to Proof for team review
   /ckw:progress                         Full project status
 
 Full report: .planning/phases/{NN}-{phase-name}/REVIEW_REPORT.md
@@ -183,9 +184,10 @@ P3 (Nice to Fix): [count] issues
 ✅ No critical issues. Phase is ready for completion or compounding.
 
 Next:
-  /ckw:compound --phase [N]    Capture learnings from this phase
-  /ckw:execute-phase [N+1]     Move to next phase
-  /ckw:progress                Full project status
+  /ckw:publish-proof --phase [N] --with-review    Publish to Proof with review comments
+  /ckw:compound --phase [N]                       Capture learnings from this phase
+  /ckw:execute-phase [N+1]                        Move to next phase
+  /ckw:progress                                   Full project status
 
 Full report: .planning/phases/{NN}-{phase-name}/REVIEW_REPORT.md
 

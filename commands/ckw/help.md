@@ -16,7 +16,7 @@ No flags needed.
 
 ## What This Command Does
 
-Detect project context, then display all 16 commands organized by workflow stage. No agent spawn — pure display.
+Detect project context, then display all 17 commands organized by workflow stage. No agent spawn — pure display.
 
 ### Step 1: Detect Project Context
 
@@ -69,6 +69,10 @@ CKW Commands — Compound Knowledge Work
   /ckw:review-phase          Quality review on drafted content
                              Example: /ckw:review-phase 1
 
+━━ Share & Export ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  /ckw:publish-proof         Publish drafts to Proof for collaborative review
+                             Example: /ckw:publish-proof --phase 1 --with-review
+
 ━━ Complete ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   /ckw:compound              Capture what worked for future projects
                              Example: /ckw:compound
@@ -100,7 +104,7 @@ If in a project, add a marker next to the most relevant command group based on S
 | `scoped` | Plan | "Your project is scoped — next step is planning." |
 | `planned` | Execute | "Phase [N] is planned — ready to execute." |
 | `in-progress` or `executing` | Execute | "Phase [N] execution in progress." |
-| `drafted` | Review | "Drafts are ready for review." |
+| `drafted` | Review / Share | "Drafts are ready for review. Publish to Proof for team feedback." |
 | `reviewing` | Execute | "Review complete — fix P1 issues with --revisions." |
 | `reviewed` | Complete | "Review done — capture learnings or start next phase." |
 | `paused` | Navigate | "Project is paused — run resume-work to pick up." |
@@ -134,7 +138,7 @@ Full user guide: docs/USER-GUIDE.md
 - Commands are grouped by workflow stage, not alphabetically — this teaches the CKW workflow implicitly
 - Each command gets exactly one line of description + one line of example — scannable in 10 seconds
 - The contextual highlight tells the user what's relevant NOW without them having to figure it out
-- 16 total commands after Phase 4 (11 from Phases 1-3, 5 new from Phase 4)
+- 17 total commands after Proof integration (11 from Phases 1-3, 5 from Phase 4, 1 from Proof)
 - This command is the reference companion to `docs/USER-GUIDE.md` (which is scenario-based, not command-based)
 
 ## Error Handling
