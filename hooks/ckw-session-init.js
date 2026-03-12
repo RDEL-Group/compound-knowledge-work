@@ -105,6 +105,8 @@ function main() {
         lines.push("Drafts complete. Run /ckw:review-phase to review.");
       } else if (status === "reviewed") {
         lines.push("Review complete. Run /ckw:compound to capture learnings, or /ckw:complete-project to close out.");
+      } else if (status === "paused") {
+        lines.push("Project paused. Run /ckw:resume-work to pick up with handoff context.");
       } else {
         lines.push("Run /ckw:progress for full project status.");
       }

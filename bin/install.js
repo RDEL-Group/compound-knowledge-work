@@ -147,7 +147,10 @@ async function main() {
     if (!settings.hooks) settings.hooks = {};
     if (!settings.hooks.SessionStart) settings.hooks.SessionStart = [];
 
-    const hookCmd = `bash ${path.join(installDir, "hooks", "ckw-session-init.sh")}`;
+    const isWindows = process.platform === "win32";
+    const hookCmd = isWindows
+      ? `node ~/.claude/hooks/ckw-session-init.js`
+      : `bash ~/.claude/hooks/ckw-session-init.sh`;
     const alreadyRegistered = settings.hooks.SessionStart.some(
       (entry) =>
         entry.hooks &&
