@@ -13,10 +13,13 @@ Import reference documents into a CKW project. Each document is converted to rea
 /ckw:import-reference reference/client-brief.pdf
 /ckw:import-reference reference/*.pdf
 /ckw:import-reference --batch reference/
+/ckw:import-reference --from-drive "search term"
+/ckw:import-reference --from-drive DOC_ID
 ```
 
 - `<path>`: Path to a single file or glob pattern
 - `--batch <directory>`: Process all supported files in the directory
+- `--from-drive <term or ID>`: Fetch file(s) from Google Drive instead of local filesystem
 
 ## What This Command Does
 
@@ -33,6 +36,42 @@ Check that this is a CKW project:
 ```
 No CKW project found in this directory.
 Run /ckw:new-project or /ckw:adopt-project first.
+```
+
+### Step 1b: Fetch from Google Drive (if --from-drive)
+
+If `--from-drive` is specified, use the **gws-reader** skill to fetch content from Google Drive instead of reading local files.
+
+1. **Run gws-reader prerequisites check** — verify `gws` is installed and authenticated. If not, show install/auth instructions and STOP.
+
+2. **If the argument looks like a file ID** (long alphanumeric string), read it directly. Otherwise, invoke gws-reader in Search mode:
+
+```bash
+gws drive files list --params '{"q": "name contains '\''SEARCH_TERM'\''", "includeItemsFromAllDrives": true, "supportsAllDrives": true, "corpora": "allDrives", "pageSize": 10, "fields": "files(id,name,mimeType,modifiedTime,parents)"}'
+```
+
+3. **Present search results** and ask user which files to import (can select multiple).
+
+4. **For each selected file:**
+   - Detect mimeType and invoke the appropriate gws-reader mode (Doc, Sheet, or Slides)
+   - Save the markdown output to `reference/{filename}.md` where filename is the Google file name lowercased with spaces as hyphens
+   - Example: "Satellite PRD FY2026" → `reference/satellite-prd-fy2026.md`
+
+5. **Continue to Step 4** (Process Each File) with these saved local files. The import-summarizer skill generates indexed summaries as normal.
+
+**If gws not installed:**
+```
+Google Workspace CLI (gws) is required for --from-drive.
+
+Install:
+  npm install -g @googleworkspace/cli
+
+Then authenticate:
+  gws auth setup
+  gws auth login
+
+Or import local files instead:
+  /ckw:import-reference <path>
 ```
 
 ### Step 2: Resolve Files

@@ -72,6 +72,7 @@ When you run `/ckw:compound` after completing work, CKW will offer to promote re
 | `/ckw:add-todo` | Capture an idea for later |
 | `/ckw:review-phase` | Quality review on drafted content |
 | `/ckw:publish-proof` | Publish drafts to [Proof](https://proofeditor.ai) for collaborative review with AI provenance |
+| `/ckw:drive` | Search, read, import, or upload via Google Drive |
 | `/ckw:compound` | Capture what worked for future projects |
 | `/ckw:complete-project` | Close out with a full retrospective |
 | `/ckw:progress` | See where the project stands |

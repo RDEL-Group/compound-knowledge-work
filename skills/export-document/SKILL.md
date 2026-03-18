@@ -239,6 +239,44 @@ When pandoc applies a `--reference-doc` template that has embedded fonts (common
 2. python3 is available on the system
 3. The output file wasn't modified between the fix and opening in Word
 
+## Upload to Google Drive (--to-drive)
+
+After exporting, optionally upload the output file to Google Drive. This is triggered when the user includes `--to-drive` in their request, e.g.:
+```
+Export drafts/report.md to docx --to-drive
+Export drafts/report.md to docx --to-drive "Project Deliverables"
+```
+
+### Step 7: Upload to Drive (if --to-drive)
+
+1. **Check gws prerequisites** — verify `gws` is installed and authenticated:
+   ```bash
+   which gws
+   gws drive files list --params '{"pageSize": 1}' 2>&1
+   ```
+   If gws not installed or auth expired, report the error but DO NOT fail the export — the local file was already created successfully. Just note:
+   ```
+   Export complete! Local file saved at [path].
+   Google Drive upload skipped — gws CLI not available/authenticated.
+   Install: npm install -g @googleworkspace/cli
+   ```
+
+2. **Find target folder** — if `--to-drive` includes a folder name, search for it using the **gws-writer** skill. If no folder specified, ask the user.
+
+3. **Upload** using the gws-writer skill:
+   ```bash
+   gws drive files create --json '{"name": "FILENAME", "parents": ["FOLDER_ID"]}' --params '{"supportsAllDrives": true}' --upload "OUTPUT_FILE_PATH"
+   ```
+
+4. **Report:**
+   ```
+   Exported and uploaded!
+
+   Local:  drafts/report.docx (42 KB)
+   Drive:  Google Drive / Project Deliverables
+   View:   https://drive.google.com/file/d/FILE_ID/view
+   ```
+
 ## Error Handling
 
 - **pandoc not installed** → Clear install instructions (see Prerequisites)

@@ -16,7 +16,7 @@ No flags needed.
 
 ## What This Command Does
 
-Detect project context, then display all 17 commands organized by workflow stage. No agent spawn — pure display.
+Detect project context, then display all 18 commands organized by workflow stage. No agent spawn — pure display.
 
 ### Step 1: Detect Project Context
 
@@ -70,6 +70,9 @@ CKW Commands — Compound Knowledge Work
                              Example: /ckw:review-phase 1
 
 ━━ Share & Export ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  /ckw:drive                 Search, read, import, or upload via Google Drive
+                             Example: /ckw:drive import "client brief"
+
   /ckw:publish-proof         Publish drafts to Proof for collaborative review
                              Example: /ckw:publish-proof --phase 1 --with-review
 
@@ -138,7 +141,7 @@ Full user guide: docs/USER-GUIDE.md
 - Commands are grouped by workflow stage, not alphabetically — this teaches the CKW workflow implicitly
 - Each command gets exactly one line of description + one line of example — scannable in 10 seconds
 - The contextual highlight tells the user what's relevant NOW without them having to figure it out
-- 17 total commands after Proof integration (11 from Phases 1-3, 5 from Phase 4, 1 from Proof)
+- 18 total commands after Google Workspace integration (11 from Phases 1-3, 5 from Phase 4, 1 from Proof, 1 from GWS)
 - This command is the reference companion to `docs/USER-GUIDE.md` (which is scenario-based, not command-based)
 
 ## Error Handling
