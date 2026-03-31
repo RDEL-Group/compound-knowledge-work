@@ -9,7 +9,7 @@ Extract reusable solutions from completed work. The compounder interviews you ab
 
 ## Usage
 ```
-/ckw:compound [--phase N]
+/ckw:compound [--phase N] [--headless]
 ```
 
 - Default: compound from the entire project (all phases)
@@ -129,6 +129,17 @@ Next:
   /ckw:complete-project            Close out the project with a retrospective
   /ckw:progress                    Full project status
 ```
+
+## Pipeline Mode
+
+**`--headless` behavior:** Extract solutions from artifacts only, without interviewing the user.
+
+- **Interview (compounder Step 2):** Skip. The compounder scans artifacts (Step 1) and drafts solutions from patterns found in task summaries, CONTEXT.md, REVIEW_REPORT.md, and drafts.
+- **User review (compounder Step 4):** Skip. Auto-save all drafted solutions.
+- **Staleness check (compounder Step 5):** Still runs. If conflicts are found, log them but auto-keep both (conservative default). Do not prompt.
+- **Promotion (compounder Step 7):** Skip. Solutions stay project-local. Promotion requires explicit user decision.
+- **All file writes and git commits:** Proceed without confirmation.
+- **Report (compounder Step 8):** Still generated.
 
 ## Error Handling
 

@@ -92,7 +92,9 @@ source_project: [project name from PROJECT.md]
 source_phase: [phase number and name, or "project-wide"]
 created: [ISO date]
 confidence: [high | medium | low]
+last_validated: [ISO date — same as created for new solutions]
 reuse_context: [One sentence: when to apply this — e.g., "Any project requiring status classification logic"]
+supersedes: [optional — filename of older solution this replaces, e.g., "old-approach-name.md"]
 ---
 
 # [Solution Name]
@@ -137,7 +139,61 @@ Solution 2: [Name]
 
 Only save solutions the user confirms.
 
-### Step 5: Update Solutions Index
+### Step 5: Staleness Check
+
+Before saving and promoting, scan existing solutions for conflicts with the newly confirmed solutions. This prevents the knowledge base from accumulating contradictions over time.
+
+**What to scan:**
+- Project-local: `docs/solutions/` (all existing solution files)
+- Shared repo: Each path in `~/.ckw/config.json` → `knowledge_repos[]` → `solutions/`
+
+**What to look for:**
+
+1. **Contradictions** — Does a new solution recommend the opposite approach to an existing one for the same scenario? Compare `reuse_context` fields and the "When to Use It" sections. Two solutions that apply to the same situation but recommend different approaches are contradictions.
+
+2. **Superseding** — Is a new solution a better version of an existing one? Same `reuse_context` but higher confidence, more specific pattern, or broader applicability. The new solution should reference the old one via the `supersedes` frontmatter field.
+
+3. **Near-duplicates** — Do a new and existing solution cover the same ground with different wording? Same tags, similar `reuse_context`, overlapping "The Pattern" content. These should be merged rather than kept as separate entries.
+
+4. **Stale entries** — While scanning, flag any existing solutions with `confidence: low` AND `created` date older than 6 months that haven't been validated recently (`last_validated` older than 6 months or missing). These are candidates for retirement regardless of the new solutions.
+
+**If findings exist, present them to the user:**
+
+```
+Before saving, I found some potential conflicts in the existing
+knowledge base:
+
+🔄 Possible contradiction:
+  New: "[New solution name]" recommends [approach A]
+  Existing: "[Old solution name]" recommends [approach B]
+  Both apply when: [shared reuse context]
+  → Keep both / Update existing / Retire existing?
+
+📎 Possible superseding:
+  New: "[New solution name]" appears to be a better version of
+  "[Old solution name]" (higher confidence, more specific)
+  → Mark new as superseding old / Keep both separate?
+
+📋 Near-duplicate:
+  New: "[New solution name]" overlaps significantly with
+  "[Old solution name]"
+  → Merge into one / Keep both?
+
+⏰ Stale entry found (not related to new solutions):
+  "[Old solution name]" — confidence: low, created [date],
+  never validated
+  → Retire / Update confidence / Keep as-is?
+```
+
+**Rules for this step:**
+- Never modify or retire existing solutions without explicit user confirmation
+- If no conflicts found, skip this step silently — don't report "no conflicts found"
+- When a user confirms superseding, add `supersedes: [old-filename.md]` to the new solution's frontmatter
+- When a user confirms retirement, delete the solution file and remove it from the solutions index
+- When a user confirms a merge, update the existing solution (don't create a new one) and update `last_validated` to today
+- Update `last_validated` on any existing solution the user explicitly confirms is still valid during this check
+
+### Step 6: Update Solutions Index
 
 Create or update `docs/solutions/solutions-index.md`:
 
@@ -154,7 +210,7 @@ Last updated: [date]
 
 If the index already exists, append new entries (don't overwrite existing solutions from other phases or projects).
 
-### Step 6: Promotion Flow
+### Step 7: Promotion Flow
 
 For each saved solution, offer promotion to the shared knowledge repo:
 
@@ -187,7 +243,7 @@ Save the path to `knowledge_repos` array in config.json, then proceed with promo
 
 **If "skip all":** Skip promotion for remaining solutions.
 
-### Step 7: Report
+### Step 8: Report
 
 ```
 Compounding complete!

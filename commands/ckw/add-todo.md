@@ -89,6 +89,10 @@ Backlog now has [N] items ([M] open, [K] completed).
 - Items can be manually checked off by editing `- [ ]` to `- [x]` in BACKLOG.md.
 - For tasks that need full planning, use `/ckw:plan-phase` instead.
 
+## Pipeline Mode
+
+**`--headless` behavior:** Requires inline description. If no description is provided inline, return error: "Headless mode requires an inline description. Usage: `/ckw:add-todo \"description\" --headless`". All other behavior is unchanged — this command is already non-interactive when a description is provided.
+
 ## Error Handling
 
 - No STATE.md found: Suggest `/ckw:new-project` or `/ckw:adopt-project`

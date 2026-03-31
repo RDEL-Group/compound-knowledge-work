@@ -332,6 +332,20 @@ Project scoped! Here's what to do next:
 **Search:** Shared knowledge repo solutions/ (if configured)
 **Do NOT load:** Any project files (this is a new project)
 
+## Pipeline Mode
+
+**`--headless` behavior:** Project scoping requires human input to define what the project is, who it's for, and what success looks like. Running headless would produce a project skeleton with no real substance.
+
+**If `--headless` is passed without `--from-prd`:** Return an error with alternatives:
+```
+Project scoping requires interactive interview and cannot run headless.
+
+Alternative:
+  /ckw:new-project --from-prd <path> --headless    Extract scope from a PRD automatically
+```
+
+**If `--headless` is passed WITH `--from-prd`:** Proceed. The PRD provides the substance that the interview would otherwise capture. Skip the validation step ("5 things I'm most likely wrong about") — save files directly. Flag all assumptions as `[ACTION REQUIRED]` in STATE.md open questions. Skip the "already has CKW files" check — overwrite if present.
+
 ## Error Handling
 
 - If `~/.ckw/config.json` doesn't exist, run setup inline (ask name, create config)

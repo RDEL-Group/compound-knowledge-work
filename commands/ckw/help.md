@@ -16,7 +16,7 @@ No flags needed.
 
 ## What This Command Does
 
-Detect project context, then display all 18 commands organized by workflow stage. No agent spawn — pure display.
+Detect project context, then display all 19 commands organized by workflow stage. No agent spawn — pure display.
 
 ### Step 1: Detect Project Context
 
@@ -48,6 +48,9 @@ CKW Commands — Compound Knowledge Work
 ━━ Plan ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   /ckw:brainstorm            Explore ideas before planning a phase
                              Example: /ckw:brainstorm 2
+
+  /ckw:confidence            Check what you know vs. what you're guessing
+                             Example: /ckw:confidence --save
 
   /ckw:plan-phase            Break a phase into executable tasks
                              Example: /ckw:plan-phase 1
@@ -122,6 +125,7 @@ Add the note after the group header, e.g.:
 
 **If in a project:**
 ```
+Most commands support --headless for pipeline/orchestration use.
 Run any command to see detailed usage and options.
 Full user guide: docs/USER-GUIDE.md
 ```
@@ -132,6 +136,7 @@ Not in a CKW project. Start with:
   /ckw:new-project           Scope a new project
   /ckw:adopt-project         Import an existing folder
 
+Most commands support --headless for pipeline/orchestration use.
 Run any command to see detailed usage and options.
 Full user guide: docs/USER-GUIDE.md
 ```
@@ -141,8 +146,12 @@ Full user guide: docs/USER-GUIDE.md
 - Commands are grouped by workflow stage, not alphabetically — this teaches the CKW workflow implicitly
 - Each command gets exactly one line of description + one line of example — scannable in 10 seconds
 - The contextual highlight tells the user what's relevant NOW without them having to figure it out
-- 18 total commands after Google Workspace integration (11 from Phases 1-3, 5 from Phase 4, 1 from Proof, 1 from GWS)
+- 19 total commands after Phase 4.6 (11 from Phases 1-3, 5 from Phase 4, 1 from Proof, 1 from GWS, 1 from Phase 4.6)
 - This command is the reference companion to `docs/USER-GUIDE.md` (which is scenario-based, not command-based)
+
+## Pipeline Mode
+
+**`--headless` behavior:** No change. This command is already non-interactive — it displays command reference without prompting.
 
 ## Error Handling
 

@@ -177,6 +177,15 @@ Reference imported from Google Drive: [filename] (~[N] tokens)
 - **Permission denied** → "You don't have access to this file/folder"
 - **Conversion error** → Show the error, offer to display raw content
 
+## Pipeline Mode
+
+**`--headless` behavior:** Requires mode (search/read/import/upload) as first argument. Behavior per mode:
+
+- **search:** No change — already non-interactive.
+- **read:** Requires file ID (not search term). If a search term is given, return error: "Headless mode requires a file ID for read, not a search term."
+- **import:** Requires file ID. Imports without confirmation.
+- **upload:** Requires `--to` folder specification. If omitted, return error: "Headless mode requires --to for upload destination."
+
 ## Design Notes
 
 - This command is a user-friendly wrapper around the gws-reader and gws-writer skills

@@ -1,0 +1,30 @@
+{
+  "name": "ckw",
+  "owner": {
+    "name": "RDEL Group",
+    "email": "richard@rdel.io"
+  },
+  "metadata": {
+    "description": "Compound Knowledge Work plugin marketplace",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "compound-knowledge-work",
+      "source": "./",
+      "description": "Phased execution with compounding institutional knowledge for any knowledge work.",
+      "version": "0.3.0",
+      "author": {
+        "name": "Richard Marginson"
+      },
+      "category": "productivity",
+      "tags": [
+        "knowledge-work",
+        "rfp",
+        "proposal",
+        "training",
+        "sop"
+      ]
+    }
+  ]
+}

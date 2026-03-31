@@ -9,7 +9,7 @@ Execute the planned tasks for a phase, drafting content with fresh context per t
 
 ## Usage
 ```
-/ckw:execute-phase <N> [--task T] [--wave W] [--revisions]
+/ckw:execute-phase <N> [--task T] [--wave W] [--revisions] [--headless]
 ```
 
 - `N`: Phase number (required)
@@ -123,6 +123,17 @@ Drafts are in markdown. To share with stakeholders:
 ## Executor Agent Rules
 
 The executor agent's full content quality rules, context discipline, output format, and self-review gate are defined in `agents/ckw-executor.md`. That agent definition is the single source of truth — do not duplicate rules here.
+
+## Pipeline Mode
+
+**`--headless` behavior:** Execute all tasks without pausing between waves or prompting the user.
+
+- **Wave-by-wave execution:** Execute all waves sequentially without confirmation between waves. Do not pause for user input.
+- **Cross-task coherence check (Step 4):** Still runs. If inconsistencies are found, fix them automatically (same as interactive behavior).
+- **Missing references:** Log a warning and continue. Do not prompt for import.
+- **ACTION REQUIRED items:** Flag them in SUMMARY files as normal, but do not prompt the user mid-execution.
+- **All file writes and git commits:** Proceed without confirmation.
+- **Progress report (Step 5):** Still generated with full details.
 
 ## Error Handling
 

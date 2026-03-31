@@ -122,6 +122,18 @@ When ready to resume:
   /ckw:progress             Check status without resuming
 ```
 
+## Pipeline Mode
+
+**`--headless` behavior:** Auto-generate handoff without the 3-question interview.
+
+- **Interview (Step 2):** Skip. Auto-generate HANDOFF.md from STATE.md context:
+  - "What's In Flight" → derived from current phase status, in-progress tasks, and recent task summaries
+  - "Key Context" → derived from STATE.md blockers, action items, and open questions
+  - "Who's this handoff for" → use `~/.ckw/config.json` → `user.name` (default: "unknown")
+- **Existing HANDOFF.md:** Overwrite without asking.
+- **All file writes and git commits:** Proceed without confirmation.
+- **Confirmation (Step 6):** Still generated.
+
 ## Error Handling
 
 - **No STATE.md found:** "No CKW project found in this directory. Nothing to pause."

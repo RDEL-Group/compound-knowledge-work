@@ -9,10 +9,10 @@ Close out a project with a full retrospective. Captures what worked, what didn't
 
 ## Usage
 ```
-/ckw:complete-project
+/ckw:complete-project [--headless]
 ```
 
-No arguments — operates on the current project.
+- `--headless`: Skip retrospective interview, generate from artifacts only
 
 ## What This Command Does
 
@@ -149,6 +149,16 @@ the solutions library.
 
 You can always run /ckw:compound later to capture additional learnings.
 ```
+
+## Pipeline Mode
+
+**`--headless` behavior:** Generate retrospective and close-out from artifacts only, without interviewing the user.
+
+- **Readiness check (Step 1):** If active phases remain, proceed anyway — mark incomplete phases as skipped. Do not prompt.
+- **Compound check (Step 2):** If no solutions captured, skip compound. Do not offer to run it.
+- **Retrospective interview (compounder Mode 2, Step 2):** Skip. Generate RETROSPECTIVE.md from artifacts: goal achievement from STATE.md, what worked from REVIEW_REPORT.md patterns, recommendations from task summaries.
+- **All file writes and git commits:** Proceed without confirmation.
+- **Final report (Step 7):** Still generated.
 
 ## Error Handling
 

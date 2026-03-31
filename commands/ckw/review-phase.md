@@ -9,7 +9,7 @@ Review all drafted content for a phase against requirements, preferences, and qu
 
 ## Usage
 ```
-/ckw:review-phase <N>
+/ckw:review-phase <N> [--headless]
 ```
 
 - `N`: Phase number (required)
@@ -198,6 +198,15 @@ Full report: .planning/phases/{NN}-{phase-name}/REVIEW_REPORT.md
   • [N] audience pressure points
   See REVIEW-stress.md for details
 ```
+
+## Pipeline Mode
+
+**`--headless` behavior:** Review all available drafts without prompting.
+
+- **Partial drafts (Step 1):** Review whatever is available without asking. Do not prompt "review now or wait?"
+- **Stress-test offer (Step 3a):** Auto-run stress-test if CONTEXT.md contains stakes language (board, client, regulatory, public-facing, financial impact). If no CONTEXT.md or no stakes indicators, skip stress-test.
+- **All file writes and git commits:** Proceed without confirmation.
+- **Report (Step 7):** Still generated with full details.
 
 ## Error Handling
 

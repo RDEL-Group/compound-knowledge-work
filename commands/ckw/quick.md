@@ -154,6 +154,10 @@ Do NOT update STATE.md YAML frontmatter — quick tasks are lightweight and shou
 - **No git commit:** Individual quick tasks are too granular for their own commits. They get picked up alongside the next meaningful command.
 - **Executor compatibility:** The `ckw-executor` agent already handles generic task plans. The inline plan format follows the same structure — no changes to the agent needed.
 
+## Pipeline Mode
+
+**`--headless` behavior:** Requires an inline description. If no description is provided, return error: "Headless mode requires an inline description. Usage: `/ckw:quick \"task description\" --headless`". All other behavior is unchanged — quick is already non-interactive once a description is provided.
+
 ## Error Handling
 
 - **Empty description (nothing provided when prompted):** "No task described. Run `/ckw:quick` again with a description of what you need."

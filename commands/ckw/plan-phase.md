@@ -9,7 +9,7 @@ Break a project phase into atomic, executable tasks. Each task should be complet
 
 ## Usage
 ```
-/ckw:plan-phase [N] [--auto]
+/ckw:plan-phase [N] [--auto] [--headless]
 ```
 
 - `N`: Phase number (from ROADMAP.md). If omitted, plans the next unplanned phase.
@@ -242,6 +242,17 @@ Next:
   /ckw:brainstorm [N]             Explore the problem space before drafting (optional)
   /ckw:execute-phase [N]          Start drafting
 ```
+
+## Pipeline Mode
+
+**`--headless` behavior:** Plan the phase without any interactive prompts.
+
+- **P0 blockers:** Plan around them with assumptions. Flag each assumption as `[ACTION REQUIRED]` in task plans. Do not prompt the user.
+- **Researcher offer (Step 1c):** Skip researcher. If RESEARCH.md already exists from a prior run, use it. Otherwise, plan without research.
+- **Preference capture fallback (Step 2.4):** If no CONTEXT.md exists, skip preference capture entirely. The planner uses defaults from PROJECT.md and REQUIREMENTS.md. Do not create a CONTEXT.md.
+- **Solution confirmation (Step 2.1):** Auto-incorporate all matching solutions without asking.
+- **All file writes and git commits:** Proceed without confirmation.
+- **Progress report:** Still generated (useful for orchestration logs).
 
 ## Error Handling
 

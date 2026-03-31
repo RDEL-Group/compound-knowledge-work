@@ -10,19 +10,38 @@ A Claude Code plugin that helps you plan, draft, review, and deliver knowledge w
 
 ## Install
 
+### Option A: npm Installer (Recommended)
+
 Run this in your terminal:
 
 ```bash
-npx --yes github:richardmarginson-rdel/compound-knowledge-work
+npx --yes github:RDEL-Group/compound-knowledge-work
 ```
 
-The installer will ask your name, where to install (choose **Global**), and optionally connect a shared knowledge repo.
+The installer sets up everything: commands, agents, skills, hooks, config, and personal preferences. It asks your name, where to install (choose **Global** for all projects), and optionally connects a shared knowledge repo.
 
-**If that doesn't work**, use the fallback:
+**If npx doesn't work**, use the fallback:
 
 ```bash
-git clone git@github.com:richardmarginson-rdel/compound-knowledge-work.git /tmp/ckw-install && node /tmp/ckw-install/bin/install.js && rm -rf /tmp/ckw-install
+git clone git@github.com:RDEL-Group/compound-knowledge-work.git /tmp/ckw-install && node /tmp/ckw-install/bin/install.js && rm -rf /tmp/ckw-install
 ```
+
+### Option B: Plugin Marketplace
+
+If you prefer Claude Code's built-in plugin system:
+
+```
+/plugin marketplace add RDEL-Group/compound-knowledge-work
+/plugin install compound-knowledge-work
+```
+
+This installs commands, agents, and skills automatically. **However**, CKW's hooks (auto-detection of project directories on session start) need one extra step:
+
+```bash
+npx --yes github:RDEL-Group/compound-knowledge-work
+```
+
+The installer detects that the plugin is already present and only registers the SessionStart hook in `settings.json` + creates your `~/.ckw/config.json`.
 
 ## Update
 
@@ -66,6 +85,7 @@ When you run `/ckw:compound` after completing work, CKW will offer to promote re
 | `/ckw:import-reference` | Add reference documents (PDF, Word, etc.) |
 | `/ckw:brainstorm` | Explore ideas before planning a phase |
 | `/ckw:plan-phase` | Break a phase into executable tasks |
+| `/ckw:confidence` | Check what you know vs. what you're guessing |
 | `/ckw:search-solutions` | Find patterns from past projects |
 | `/ckw:execute-phase` | Draft content for planned tasks |
 | `/ckw:quick` | Quick ad-hoc task without full planning |

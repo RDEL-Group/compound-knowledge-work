@@ -15,6 +15,7 @@ Import reference documents into a CKW project. Each document is converted to rea
 /ckw:import-reference --batch reference/
 /ckw:import-reference --from-drive "search term"
 /ckw:import-reference --from-drive DOC_ID
+/ckw:import-reference <path> --headless
 ```
 
 - `<path>`: Path to a single file or glob pattern
@@ -192,6 +193,16 @@ Next:
   /ckw:import-reference [more]      Import additional documents
   /ckw:progress                     Full project status
 ```
+
+## Pipeline Mode
+
+**`--headless` behavior:** Import all files without confirmation prompts.
+
+- **Batch confirmation (Step 2):** Skip. Process all supported files found at the path.
+- **Existing summaries (Step 5):** Skip existing summaries (do not re-import). To force re-import in headless mode, delete the existing summary first.
+- **`--from-drive` search results:** Not supported in headless mode. Use a specific file ID instead of a search term. If a search term is provided with `--headless`, return error: "Headless mode requires a specific file ID for --from-drive, not a search term."
+- **All file writes and git commits:** Proceed without confirmation.
+- **Context budget report (Step 6):** Still generated.
 
 ## Error Handling
 

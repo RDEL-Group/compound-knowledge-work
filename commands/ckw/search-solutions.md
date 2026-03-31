@@ -146,6 +146,10 @@ Start a project to use these solutions:
   /ckw:adopt-project   Import an existing project
 ```
 
+## Pipeline Mode
+
+**`--headless` behavior:** No change. This command is already non-interactive — it searches and displays results without prompting. The "Load a solution into context?" offer (Step 5) is skipped in headless mode; results are displayed only.
+
 ## Error Handling
 
 - **No search locations exist** → Explain how to create solutions and configure repos (see Step 1)

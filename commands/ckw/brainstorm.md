@@ -172,6 +172,19 @@ If any decisions were made during brainstorming that affect the project level (n
 | ~/.ckw/SYSTEM.md | Always | User preferences |
 | CONTEXT.md | If exists | Prior brainstorm to continue |
 
+## Pipeline Mode
+
+**`--headless` behavior:** Brainstorm is inherently interactive — it's a conversational exploration that requires human input. Running it headless would produce a superficial CONTEXT.md that misses the user's actual preferences and assumptions.
+
+**If `--headless` is passed:** Return an error with alternatives:
+```
+Brainstorm requires interactive exploration and cannot run headless.
+
+Alternatives:
+  /ckw:plan-phase [N] --headless    Plans with defaults from existing CONTEXT.md
+  /ckw:plan-phase [N] --auto        Plans with minimal interaction
+```
+
 ## Error Handling
 
 - **No project found** (no PROJECT.md or STATE.md) → "No CKW project found in this folder. Run /ckw:new-project or /ckw:adopt-project first."

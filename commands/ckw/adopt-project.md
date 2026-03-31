@@ -174,6 +174,17 @@ Next steps:
 **Scan:** All files in target directory (read headers/metadata, not full content)
 **Search:** Shared knowledge repo solutions/ (if configured)
 
+## Pipeline Mode
+
+**`--headless` behavior:** Auto-classify and generate CKW files without interactive review.
+
+- **Folder scan (Step 1):** Runs normally.
+- **Classification review (Step 2):** Skip user review of classification. Auto-classify all files using best judgment.
+- **Reorganization (Step 3):** Apply the standard CKW structure. Do not move ambiguous files — leave them in place and flag them in STATE.md open questions as `[P2 — nice to know]`.
+- **Validation ("5 things I'm most likely wrong about"):** Skip. Flag all assumptions as `[ACTION REQUIRED]` in STATE.md.
+- **Existing CKW files check:** If CKW files exist, return error: "This already looks like a CKW project. Use /ckw:resume-work to continue."
+- **All file writes and git commits:** Proceed without confirmation.
+
 ## Error Handling
 
 - If folder doesn't exist, error with clear message

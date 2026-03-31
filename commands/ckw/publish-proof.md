@@ -239,6 +239,16 @@ Next:
 - **Why PROOF-LINKS.md?** Keeps published links discoverable in the project directory. Teammates browsing the Google Drive folder can find and open Proof links without needing CKW.
 - **Token security:** Token URLs are stored in PROOF-LINKS.md. This is intentional — the file lives alongside drafts on the shared drive, and teammates need edit access for review. The ownerSecret (for deletion/revocation) is NOT stored — only returned at creation time.
 
+## Pipeline Mode
+
+**`--headless` behavior:** Publish without confirmation prompts.
+
+- **Publish confirmation (Step 4):** Skip. Publish all resolved files immediately.
+- **Review comment offer (Step 5):** If `--with-review` is set, push comments. If not set, skip — do not offer.
+- **Re-publish check (Step 6):** Auto-create new documents. Mark old entries as superseded without asking.
+- **All file writes:** Proceed without confirmation.
+- **Report (Step 10):** Still generated with full details.
+
 ## Error Handling
 
 - **No file path or phase:** "Which draft do you want to publish? Provide a file path or use --phase N."

@@ -189,6 +189,15 @@ The `ckw-session-init.sh` hook runs automatically on every new Claude Code sessi
 
 Both remain useful — the hook is passive awareness, the command is active context restoration.
 
+## Pipeline Mode
+
+**`--headless` behavior:** Restore context and display status without prompting.
+
+- **Handoff resolution (Step 5):** Skip. Leave HANDOFF.md in place. Do not ask to archive.
+- **Next action proposal (Step 4):** Still generated as output, but do not prompt for confirmation.
+- **STATE.md update (Step 6):** Still runs (clears paused status).
+- **All file writes and git commits:** Proceed without confirmation.
+
 ## Error Handling
 
 - **Alias not found in config.json:** "No project registered as '[alias]'. Available: [list]. Register with `/ckw:new-project` or `/ckw:adopt-project`."

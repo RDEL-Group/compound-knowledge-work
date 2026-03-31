@@ -132,6 +132,10 @@ If there are files in the `todos/` directory:
 - If ROADMAP.md is out of sync with STATE.md, note the discrepancy
 - If a phase plan exists but STATE.md doesn't reflect it, auto-reconcile
 
+## Pipeline Mode
+
+**`--headless` behavior:** No change. This command is already non-interactive — it reads files and displays status without prompting.
+
 ## Design Notes
 
 - This command should be FAST — no agent spawn, just file reading
