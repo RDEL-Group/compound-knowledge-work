@@ -1,12 +1,13 @@
 {
   "name": "compound-knowledge-work",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "A Claude Code plugin for knowledge work — spec-driven phased execution with compounding institutional knowledge",
   "bin": {
     "compound-knowledge-work": "./bin/install.js"
   },
   "keywords": [
     "claude-code",
+    "claude-code-plugin",
     "knowledge-work",
     "rfp",
     "proposal",
@@ -15,12 +16,15 @@
     "compound-engineering",
     "gsd"
   ],
-  "private": true,
   "author": "Richard Marginson",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/richardmarginson-rdel/compound-knowledge-work.git"
+    "url": "git+https://github.com/RDEL-Group/compound-knowledge-work.git"
+  },
+  "homepage": "https://github.com/RDEL-Group/compound-knowledge-work#readme",
+  "bugs": {
+    "url": "https://github.com/RDEL-Group/compound-knowledge-work/issues"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -31,6 +35,9 @@
     "agents/",
     "skills/",
     "hooks/",
-    "docs/"
+    "docs/",
+    "knowledge-repo-template/",
+    "LICENSE",
+    "CHANGELOG.md"
   ]
 }

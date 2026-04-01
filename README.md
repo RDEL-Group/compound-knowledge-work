@@ -1,72 +1,121 @@
 # Compound Knowledge Work (CKW)
 
-A Claude Code plugin that helps you plan, draft, review, and deliver knowledge work projects — RFPs, strategy docs, SOPs, training materials, client reports. It breaks big projects into manageable tasks, tracks progress, and remembers what worked so your next project is faster and better.
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](./CHANGELOG.md)
 
-## Prerequisites
+A Claude Code plugin for knowledge work. CKW breaks complex projects — RFPs, proposals, SOPs, training materials, strategy docs, client reports — into executable phases, drafts them with consistent quality, and remembers what worked so your next project is faster and better than the last.
 
-- **Claude Code** (Claude Desktop with CLI access)
-- **Node.js 18+** (usually comes with Claude Code)
-- **GitHub access** to this repo (you've been invited as a collaborator)
+## What CKW Does
+
+**Breaks big projects into executable tasks.** Start from a brief, PRD, or blank slate. CKW interviews you about the project, organizes it into phases, and breaks each phase into atomic tasks with context budgets — so nothing gets lost as the work scales.
+
+**Maintains quality at scale.** Every draft goes through a reviewer agent that classifies issues by severity (P1/P2/P3). High-stakes work gets a stress-test reviewer that attacks from hostile perspectives. A confidence check tells you what's solid vs. what's a guess.
+
+**Compounds what works.** After each project, CKW captures reusable patterns — what structure worked, what reviewers caught, what the client actually valued. These solutions surface automatically in future projects. The 20th RFP is measurably faster than the 2nd.
+
+**Handles the logistics.** Pause and resume with full handoff context. Import reference documents with token budgets. Export to Word, PowerPoint, or PDF. Search and read from Google Drive. Publish to Proof for collaborative review with AI provenance tracking.
+
+## Quick Demo
+
+```
+/ckw:new-project --from-prd brief.pdf    # Scope from a brief or PRD
+/ckw:brainstorm                           # Explore approach before committing
+/ckw:plan-phase 1                         # Break Phase 1 into tasks
+/ckw:execute-phase 1                      # Draft content
+/ckw:review-phase 1                       # Quality review
+/ckw:compound                             # Capture what worked
+```
 
 ## Install
 
-### Option A: npm Installer (Recommended)
+### Prerequisites
 
-Run this in your terminal:
+- [Claude Code](https://claude.ai/code) (CLI, desktop app, or IDE extension)
+- Node.js 18+
+
+### Option A: npx Installer (Recommended)
 
 ```bash
 npx --yes github:RDEL-Group/compound-knowledge-work
 ```
 
-The installer sets up everything: commands, agents, skills, hooks, config, and personal preferences. It asks your name, where to install (choose **Global** for all projects), and optionally connects a shared knowledge repo.
+The installer sets up everything: commands, agents, skills, hooks, and config. It asks your name, where to install (choose **Global** for all projects), and optionally connects a shared knowledge repo.
 
 **If npx doesn't work**, use the fallback:
 
 ```bash
-git clone git@github.com:RDEL-Group/compound-knowledge-work.git /tmp/ckw-install && node /tmp/ckw-install/bin/install.js && rm -rf /tmp/ckw-install
+git clone https://github.com/RDEL-Group/compound-knowledge-work.git /tmp/ckw-install && node /tmp/ckw-install/bin/install.js && rm -rf /tmp/ckw-install
 ```
 
 ### Option B: Plugin Marketplace
-
-If you prefer Claude Code's built-in plugin system:
 
 ```
 /plugin marketplace add RDEL-Group/compound-knowledge-work
 /plugin install compound-knowledge-work
 ```
 
-This installs commands, agents, and skills automatically. **However**, CKW's hooks (auto-detection of project directories on session start) need one extra step:
+This installs commands, agents, and skills. CKW's hooks (auto-detection of project directories on session start) need one extra step:
 
 ```bash
 npx --yes github:RDEL-Group/compound-knowledge-work
 ```
 
-The installer detects that the plugin is already present and only registers the SessionStart hook in `settings.json` + creates your `~/.ckw/config.json`.
+The installer detects that the plugin is already present and only registers the SessionStart hook + creates your config.
 
-## Update
+### Update
 
 Run the same install command again. Your config and project registry are preserved — only the plugin files get updated.
 
-## Quick Start
+## All Commands
 
-**Start a new project:**
-Open Claude Code in a project folder and run `/ckw:new-project`. CKW interviews you about the project and sets up the structure. If you have a brief or PRD, use `/ckw:new-project --from-prd path/to/brief.pdf`.
+| Stage | Command | What it does |
+|-------|---------|--------------|
+| **Start** | `/ckw:new-project` | Scope a new project (from scratch or from a PRD) |
+| | `/ckw:adopt-project` | Import an existing project folder into CKW |
+| | `/ckw:import-reference` | Add reference documents (PDF, Word, etc.) |
+| **Plan** | `/ckw:brainstorm` | Explore ideas before planning a phase |
+| | `/ckw:confidence` | Check what you know vs. what you're guessing |
+| | `/ckw:plan-phase` | Break a phase into executable tasks |
+| | `/ckw:search-solutions` | Find patterns from past projects |
+| **Execute** | `/ckw:execute-phase` | Draft content for planned tasks |
+| | `/ckw:quick` | Quick ad-hoc task without full planning |
+| **Review** | `/ckw:review-phase` | Quality review on drafted content |
+| **Share** | `/ckw:publish-proof` | Publish to [Proof](https://proofeditor.ai) for collaborative review with AI provenance |
+| | `/ckw:drive` | Search, read, import, or upload via Google Drive |
+| **Learn** | `/ckw:compound` | Capture what worked for future projects |
+| | `/ckw:complete-project` | Close out with a full retrospective |
+| **Track** | `/ckw:progress` | See where the project stands |
+| | `/ckw:add-todo` | Capture an idea for later |
+| | `/ckw:pause-work` | Pause and capture handoff context |
+| | `/ckw:resume-work` | Resume with full context restoration |
+| | `/ckw:help` | Show all commands with examples |
 
-**Do something quick:**
-Don't need a full project? Run `/ckw:quick "Draft an email to the client about the Q2 timeline"` — CKW drafts it with quality checks and saves the output.
+## Architecture
 
-**Pick up where someone left off:**
-Run `/ckw:resume-work` to see what was in progress, any blockers, and exactly where to start.
+CKW is a zero-dependency Claude Code plugin. Everything is markdown and vanilla Node.js:
 
-## Connecting the Shared Knowledge Repo
+- **19 slash commands** (`commands/ckw/`) — markdown files that define the command interface
+- **7 specialized agents** (`agents/`) — scoper, planner, executor, reviewer, stress-test reviewer, compounder, researcher
+- **5 skills** (`skills/`) — import/export, Google Workspace, Proof integration
+- **3 hooks** (`hooks/`) — context monitoring, status display, session auto-detection
 
-Your team has a shared folder on Google Drive for cross-project learnings. During install, when asked for the knowledge repo path, enter the full path to the shared folder:
+No npm dependencies. No build step. Installation is instant.
 
-```
-/Users/yourname/Library/CloudStorage/GoogleDrive-you@company.com/Shared drives/Team/CKW Knowledge Repo
-```
+## Optional Integrations
 
-You can also add it later by editing `~/.ckw/config.json`:
+These are not required. CKW works fully without them.
+
+**Google Workspace** — Requires the [`gws` CLI](https://www.npmjs.com/package/@googleworkspace/cli) and `python3`. Enables `/ckw:drive` for searching, reading, and uploading Google Docs, Sheets, and Slides. Also enables `--from-drive` on `/ckw:import-reference` and `--to-drive` on the export skill.
+
+**Proof** — No setup needed. Works with [proofeditor.ai](https://proofeditor.ai) out of the box. Enables `/ckw:publish-proof` for collaborative review with character-level AI provenance tracking.
+
+**Export** — Requires [pandoc](https://pandoc.org/installing.html). Enables markdown-to-Word, PowerPoint, and PDF export with optional branded templates.
+
+## Shared Knowledge Repo
+
+CKW compounds what works across projects through a shared knowledge repo — a folder (typically on Google Drive for team access) that stores reusable patterns, templates, and playbooks.
+
+A starter template is included at `knowledge-repo-template/`. Copy it to your shared location and point CKW to it during install, or add the path later in `~/.ckw/config.json`:
 
 ```json
 {
@@ -74,47 +123,44 @@ You can also add it later by editing `~/.ckw/config.json`:
 }
 ```
 
-When you run `/ckw:compound` after completing work, CKW will offer to promote reusable patterns to this shared folder so everyone benefits.
+When you run `/ckw:compound`, CKW offers to promote reusable patterns to this shared repo.
 
-## All Commands
+## Documentation
 
-| Command | What it does |
-|---------|-------------|
-| `/ckw:new-project` | Scope a new project (from scratch or from a PRD) |
-| `/ckw:adopt-project` | Import an existing project folder into CKW |
-| `/ckw:import-reference` | Add reference documents (PDF, Word, etc.) |
-| `/ckw:brainstorm` | Explore ideas before planning a phase |
-| `/ckw:plan-phase` | Break a phase into executable tasks |
-| `/ckw:confidence` | Check what you know vs. what you're guessing |
-| `/ckw:search-solutions` | Find patterns from past projects |
-| `/ckw:execute-phase` | Draft content for planned tasks |
-| `/ckw:quick` | Quick ad-hoc task without full planning |
-| `/ckw:add-todo` | Capture an idea for later |
-| `/ckw:review-phase` | Quality review on drafted content |
-| `/ckw:publish-proof` | Publish drafts to [Proof](https://proofeditor.ai) for collaborative review with AI provenance |
-| `/ckw:drive` | Search, read, import, or upload via Google Drive |
-| `/ckw:compound` | Capture what worked for future projects |
-| `/ckw:complete-project` | Close out with a full retrospective |
-| `/ckw:progress` | See where the project stands |
-| `/ckw:pause-work` | Pause and capture handoff context |
-| `/ckw:resume-work` | Resume with full context restoration |
-| `/ckw:help` | Show all commands with examples |
-
-## Full Documentation
-
-- Run `/ckw:help` inside Claude Code for a grouped command reference with examples
-- See `docs/USER-GUIDE.md` for scenario-based guidance
+- `/ckw:help` inside Claude Code for a grouped command reference with examples
+- [`docs/USER-GUIDE.md`](./docs/USER-GUIDE.md) for scenario-based guidance
+- [`CONTRIBUTING.md`](./CONTRIBUTING.md) for development setup
 
 ## Troubleshooting
 
 **Commands don't show in the `/` autocomplete dropdown:**
-This is a known Claude Code UI caching issue. The commands still work — type them directly (e.g., type `/ckw:help` and press Enter). They'll execute correctly even if they don't appear in the dropdown.
+This is a known Claude Code UI caching issue. The commands still work — type them directly (e.g., type `/ckw:help` and press Enter).
 
 **"No CKW project found" error:**
 Make sure you're in a project directory that has a STATE.md file. Start with `/ckw:new-project` or `/ckw:adopt-project` to set one up.
 
 **Installer fails with permission error:**
-Make sure you have write access to `~/.claude/`. If you've never used Claude Code custom commands before, the directory might not exist yet — the installer will create it.
+Make sure you have write access to `~/.claude/`. The installer creates the directory if it doesn't exist.
 
-**Need help?**
-Ask Richard — or run `/ckw:help` for a full command reference.
+**Something else?** [Open an issue](https://github.com/RDEL-Group/compound-knowledge-work/issues).
+
+## Credits
+
+CKW stands on the shoulders of several open-source projects:
+
+| Project | What CKW adopted |
+|---------|-----------------|
+| [Compound Engineering](https://github.com/EveryInc/compound-engineering-plugin) (Every, Inc.) | Core knowledge compounding concept |
+| [Compound Knowledge Plugin](https://github.com/EveryInc/compound-knowledge-plugin) (Every, Inc.) | Confidence check, pipeline mode, stale knowledge patterns |
+| [Superpowers](https://github.com/obra/superpowers) (obra) | Anti-rationalization, self-review gates, hard gates |
+| [CoworkPowers](https://github.com/peterparker78/coworkpowers) (peterparker78) | Stakes-based scaling, stress-test review |
+| [GSD](https://github.com/jlowin/gsd) (jlowin) | Phased execution, fresh context per task |
+| [Proof](https://proofeditor.ai) (Every, Inc.) | AI provenance tracking |
+
+## License
+
+MIT — see [LICENSE](./LICENSE).
+
+## Author
+
+Richard Marginson / [RDEL Group](https://github.com/RDEL-Group)

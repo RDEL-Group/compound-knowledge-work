@@ -2,7 +2,7 @@
   "name": "ckw",
   "owner": {
     "name": "RDEL Group",
-    "email": "richard@rdel.io"
+    "email": "richard.marginson@rdelgroup.com"
   },
   "metadata": {
     "description": "Compound Knowledge Work plugin marketplace",
@@ -13,7 +13,7 @@
       "name": "compound-knowledge-work",
       "source": "./",
       "description": "Phased execution with compounding institutional knowledge for any knowledge work.",
-      "version": "0.3.0",
+      "version": "1.0.0",
       "author": {
         "name": "Richard Marginson"
       },

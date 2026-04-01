@@ -1,10 +1,10 @@
 {
   "name": "compound-knowledge-work",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Compound Knowledge Work — phased execution with compounding institutional knowledge for RFPs, training, SOPs, strategy docs, and any knowledge work.",
   "author": {
     "name": "Richard Marginson",
-    "email": "richard@rdel.io"
+    "email": "richard.marginson@rdelgroup.com"
   },
   "repository": "https://github.com/RDEL-Group/compound-knowledge-work",
   "license": "MIT",
