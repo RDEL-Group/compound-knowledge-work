@@ -28,6 +28,7 @@ Optionally pushes CKW reviewer comments (P1/P2 issues) as inline Proof comments,
 - `<path>`: Path to a single markdown file
 - `--phase <N>`: Publish all drafts from phase N
 - `--with-review`: Also push P1/P2 reviewer comments to the Proof document
+- `--confirm-publish`: In `--headless` mode, required to actually publish (publication is public and irrevocable — headless fails closed without it)
 
 ## What This Command Does
 
@@ -106,10 +107,14 @@ Ready to publish to Proof at {base_url}:
   2. drafts/market-analysis.md       (3,800 words)
   3. drafts/recommendations.md       (1,900 words)
 
+⚠ This publishes to {base_url} — a hosted service. Anyone with the link can view
+  each document. Publication is NOT revocable without the owner secret, which is
+  shown once and saved to .proof-secrets.md. Keep that file safe.
+
 Publish all 3 files?
 ```
 
-Wait for user confirmation.
+Wait for explicit user confirmation before proceeding.
 
 ### Step 5: Check for Review Report
 
@@ -162,15 +167,16 @@ Report progress after each file:
 If review comments are being pushed:
 
 1. Read REVIEW_REPORT.md
-2. Parse P1 and P2 issue tables. Expected format:
+2. Parse the P1 and P2 issue tables from REVIEW_REPORT.md. The reviewer emits:
    ```
-   | ID | Severity | Draft | Issue | Quote |
+   | # | Severity | Draft | Quote | Issue | Requirement | Suggested Fix |   (P1)
+   | # | Severity | Draft | Quote | Issue | Suggested Fix |                (P2)
    ```
-   Or similar markdown table structure — parse flexibly.
+   Parse by column **header** (locate `Severity`, `Draft`, `Quote`, `Issue`), not by position, so extra columns don't break it. The report's YAML frontmatter also carries `p1_count`/`p2_count`.
 3. For each P1/P2 issue:
    - Match the `Draft` column to one of the published files
-   - Extract the `Quote` column as the anchor text
-   - Build the comment text: `[{Severity}] {Issue description}`
+   - Extract the `Quote` column as the anchor text (if it's `—`, post the comment unanchored)
+   - Build the comment text: `[{Severity}] {Issue}`
    - Call the proof-publisher skill to push the comment to the matching Proof document
 4. Track results: how many anchored (quote matched), how many unanchored (quote not found, posted without anchor)
 
@@ -202,6 +208,21 @@ Proof tracks AI vs. human authorship — edits made in the Proof editor are attr
 
 **Security note:** Token URLs grant edit access. PROOF-LINKS.md contains these tokens. If the project is on a shared Google Drive, anyone with drive access can see the edit links. This is by design — teammates need edit access to review.
 
+**Owner secrets → `.proof-secrets.md` (separate file):** The `ownerSecret` returned at creation is the ONLY way to delete or revoke a document, and Proof publication is otherwise irreversible. Persist it in `.proof-secrets.md` next to PROOF-LINKS.md — **not** in PROOF-LINKS.md itself (that file is meant to be shared; the secrets file is not):
+
+```markdown
+# Proof Owner Secrets — DO NOT SHARE
+
+These secrets can delete or revoke the published documents below. Keep this file
+private. Losing it means a document can never be taken down.
+
+| Draft | Slug | Owner Secret | Published |
+|-------|------|--------------|-----------|
+| drafts/executive-summary.md | abc12345 | <ownerSecret> | 2026-03-12 |
+```
+
+If the project is a git repo, add `.proof-secrets.md` to `.gitignore` (create/append). Print each `ownerSecret` once in the Step 10 report — it cannot be recovered later.
+
 ### Step 10: Report Results
 
 ```
@@ -211,13 +232,15 @@ Published to Proof!
     View:  https://proofeditor.ai/d/abc12345
     Edit:  https://proofeditor.ai/d/abc12345?token=...
     Review comments: 3 (2 anchored, 1 unanchored)
+    Owner secret: <shown once — saved to .proof-secrets.md; required to unpublish>
 
   drafts/market-analysis.md
     View:  https://proofeditor.ai/d/def45678
     Edit:  https://proofeditor.ai/d/def45678?token=...
     Review comments: 1 (1 anchored)
+    Owner secret: <shown once — saved to .proof-secrets.md; required to unpublish>
 
-Links saved to PROOF-LINKS.md
+Links saved to PROOF-LINKS.md · owner secrets saved to .proof-secrets.md
 
 Share the View links with anyone who needs to read.
 Share the Edit links with teammates who need to comment or edit.
@@ -226,8 +249,9 @@ automatically attributed to the person making them.
 
 Next:
   Open the links to review in Proof
+  Save .proof-secrets.md somewhere private — it's the only way to unpublish
   /ckw:progress               Check project status
-  /ckw:export-document         Export to .docx/.pdf for formal delivery
+  Export for delivery         Ask to "export this to .docx/.pdf" (export-document skill)
   /ckw:compound                Capture what worked for future projects
 ```
 
@@ -237,13 +261,13 @@ Next:
 - **Why curl?** No npm dependencies, works on any system, matches CKW's zero-infrastructure philosophy. The API is simple REST — curl is sufficient.
 - **Why default to hosted?** proofeditor.ai works without setup. Self-hosting requires running a Node.js server — an optional step for teams wanting data sovereignty.
 - **Why PROOF-LINKS.md?** Keeps published links discoverable in the project directory. Teammates browsing the Google Drive folder can find and open Proof links without needing CKW.
-- **Token security:** Token URLs are stored in PROOF-LINKS.md. This is intentional — the file lives alongside drafts on the shared drive, and teammates need edit access for review. The ownerSecret (for deletion/revocation) is NOT stored — only returned at creation time.
+- **Token security:** Token URLs are stored in PROOF-LINKS.md — intentional, since the file lives alongside drafts on the shared drive and teammates need edit access for review. The ownerSecret (delete/revoke) is more sensitive, so it's kept OUT of PROOF-LINKS.md and written to a separate, git-ignored `.proof-secrets.md`, shown once at publish. Proof publication is otherwise irrevocable, so losing the secret means the document can't be taken down.
 
 ## Pipeline Mode
 
 **`--headless` behavior:** Publish without confirmation prompts.
 
-- **Publish confirmation (Step 4):** Skip. Publish all resolved files immediately.
+- **Publish confirmation (Step 4):** Requires the explicit `--confirm-publish` flag. Without it, headless publish refuses and exits (fail-closed — publishing to a public host is irreversible). With `--confirm-publish`, skip the interactive prompt and publish.
 - **Review comment offer (Step 5):** If `--with-review` is set, push comments. If not set, skip — do not offer.
 - **Re-publish check (Step 6):** Auto-create new documents. Mark old entries as superseded without asking.
 - **All file writes:** Proceed without confirmation.

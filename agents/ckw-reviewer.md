@@ -132,6 +132,15 @@ Then also check specificity:
 Save to `.planning/phases/{NN}-{phase-name}/REVIEW_REPORT.md`:
 
 ```markdown
+---
+phase: [N]
+reviewed: [date]
+p1_count: [count]
+p2_count: [count]
+p3_count: [count]
+overall: [Strong | Needs revision | Major issues]
+---
+
 # Review Report — Phase [N]: [Phase Name]
 
 **Reviewed:** [date]
@@ -145,20 +154,22 @@ Save to `.planning/phases/{NN}-{phase-name}/REVIEW_REPORT.md`:
 <!-- These are intentional flags from the executor, not review issues -->
 - [file]: [ACTION REQUIRED item description]
 
+*Every finding quotes the exact draft text it anchors to (the **Quote** column) — verbatim and brief. This enables anchored Proof comments (`/ckw:publish-proof --with-review`) and makes each finding auditable. Use `—` when there's no anchor text, e.g. a requirement with zero coverage.*
+
 ## P1 — Must Fix ([count])
-| # | Draft | Issue | Requirement | Suggested Fix |
-|---|-------|-------|-------------|---------------|
-| 1 | [file] | [specific issue] | [req ID or "N/A"] | [actionable fix] |
+| # | Severity | Draft | Quote | Issue | Requirement | Suggested Fix |
+|---|----------|-------|-------|-------|-------------|---------------|
+| 1 | P1 | [file] | "[exact draft text, or —]" | [specific issue] | [req ID or "N/A"] | [actionable fix] |
 
 ## P2 — Should Fix ([count])
-| # | Draft | Issue | Suggested Fix |
-|---|-------|-------|---------------|
-| 1 | [file] | [specific issue] | [actionable fix] |
+| # | Severity | Draft | Quote | Issue | Suggested Fix |
+|---|----------|-------|-------|-------|---------------|
+| 1 | P2 | [file] | "[exact draft text, or —]" | [specific issue] | [actionable fix] |
 
 ## P3 — Nice to Fix ([count])
-| # | Draft | Issue | Suggested Fix |
-|---|-------|-------|---------------|
-| 1 | [file] | [specific issue] | [actionable fix] |
+| # | Severity | Draft | Quote | Issue | Suggested Fix |
+|---|----------|-------|-------|-------|---------------|
+| 1 | P3 | [file] | "[exact draft text, or —]" | [specific issue] | [actionable fix] |
 
 ## Requirements Coverage Matrix
 | Requirement ID | Description | Draft | Coverage | Notes |
@@ -202,9 +213,9 @@ Address [count] P1 issues identified in the review of [draft file].
 
 ## P1 Issues to Address
 
-| # | Issue | Requirement | Suggested Fix |
-|---|-------|-------------|---------------|
-| 1 | [from REVIEW_REPORT] | [req ID] | [fix description] |
+| # | Quote | Issue | Requirement | Suggested Fix |
+|---|-------|-------|-------------|---------------|
+| 1 | "[exact draft text, or —]" | [from REVIEW_REPORT] | [req ID] | [fix description] |
 
 ## Instructions for Executor
 1. Read the original draft carefully

@@ -115,9 +115,9 @@ p2_count: [N]
 
 ## Devil's Advocate
 
-| # | Draft | Challenge | Severity | Suggested Response |
-|---|-------|-----------|----------|--------------------|
-| 1 | [file] | [the strongest counter-argument] | P1/P2 | [how to preemptively address it] |
+| # | Draft | Quote | Challenge | Severity | Suggested Response |
+|---|-------|-------|-----------|----------|--------------------|
+| 1 | [file] | "[exact draft text, or —]" | [the strongest counter-argument] | P1/P2 | [how to preemptively address it] |
 
 ## Risk Assessment
 
@@ -127,9 +127,9 @@ p2_count: [N]
 
 ## Audience Pressure Points
 
-| # | Draft | Likely Pushback | Suggested Preemptive Fix |
-|---|-------|-----------------|--------------------------|
-| 1 | [file] | [what the tough reader will challenge] | [how to get ahead of it] |
+| # | Draft | Quote | Likely Pushback | Suggested Preemptive Fix |
+|---|-------|-------|-----------------|--------------------------|
+| 1 | [file] | "[exact draft text, or —]" | [what the tough reader will challenge] | [how to get ahead of it] |
 
 ## Overall Assessment
 [Is this ready for its audience? What's the single most important thing to fix before delivery?]
