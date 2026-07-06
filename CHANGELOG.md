@@ -41,12 +41,15 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Planner and executor agents updated for reference document context loading
 - `/ckw:review-phase` updated to optionally invoke stress-test reviewer
 
+### Fixed
+- SessionStart hook failing on Windows (unexpanded `~` in the hook path)
+
 ## [0.1.0] - 2026-02-26
 
 ### Added
-- 15 slash commands for full project lifecycle
-- 7 specialized agents (scoper, planner, executor, reviewer, stress-test reviewer, compounder, researcher)
-- 4 skills (import-summarizer, export-document, gws-reader, gws-writer)
+- 16 slash commands for full project lifecycle
+- 6 specialized agents (scoper, planner, executor, reviewer, compounder, researcher)
+- 2 skills (import-summarizer, export-document)
 - 3 hooks (context-monitor, statusline, session-init)
 - Interactive installer with hook auto-registration
 - Anti-rationalization blocks and self-review gates in agent prompts

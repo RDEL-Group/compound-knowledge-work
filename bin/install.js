@@ -6,7 +6,7 @@
  * Installs the CKW plugin into the current project or globally.
  * Sets up commands, agents, skills, and hooks for Claude Code.
  *
- * Usage: npx compound-knowledge-work@latest
+ * Usage: npx --yes github:RDEL-Group/compound-knowledge-work
  *        node bin/install.js --defaults   # non-interactive (CI); project-local install
  */
 

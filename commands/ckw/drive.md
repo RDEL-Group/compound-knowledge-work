@@ -10,9 +10,9 @@ Interact with Google Drive directly from Claude Code. Search for files, read Goo
 ## Usage
 ```
 /ckw:drive search "client brief"
-/ckw:drive read "satellite PRD"
+/ckw:drive read "northwind PRD"
 /ckw:drive read 1WTd30GDW69E98xiONfrX4KXC67SYyDxTN_nNyElREP0
-/ckw:drive import "satellite PRD"
+/ckw:drive import "northwind PRD"
 /ckw:drive upload drafts/report.docx
 /ckw:drive upload drafts/report.docx --to "Project Deliverables"
 ```
@@ -69,22 +69,24 @@ Usage:
   /ckw:drive upload local-file.docx   Upload to Drive
 ```
 
-### Step 3: Execute — Search Mode
+Step 3 branches by the mode parsed in Step 2 — run only the matching sub-step (3a–3d).
+
+### Step 3a: Search Mode
 
 Invoke the **gws-reader** skill in Search mode with the user's search term.
 
-Display results as a numbered list:
+Display results as a numbered list (include the file ID — the read/import follow-ups need it):
 ```
-Found 3 files matching "satellite":
-  1. [Doc]    Satellite PRD FY2026           (modified 2026-03-01)
-  2. [Sheet]  Satellite Metrics Dashboard    (modified 2026-03-10)
-  3. [Slides] Satellite Phase 1 Deck         (modified 2026-02-15)
+Found 3 files matching "northwind":
+  1. [Doc]    Northwind PRD FY2026           (modified 2026-03-01)  ID: 1abc...
+  2. [Sheet]  Northwind Metrics Dashboard    (modified 2026-03-10)  ID: 2def...
+  3. [Slides] Northwind Phase 1 Deck         (modified 2026-02-15)  ID: 3ghi...
 
 To read a file: /ckw:drive read [number or ID]
 To import as reference: /ckw:drive import [number or ID]
 ```
 
-### Step 3: Execute — Read Mode
+### Step 3b: Read Mode
 
 **If the argument looks like a file ID** (long alphanumeric string): read directly.
 
@@ -100,14 +102,14 @@ To import as reference: /ckw:drive import [number or ID]
 3. Display the converted markdown content
 
 ```
-Reading: Satellite PRD FY2026 (Google Doc)
+Reading: Northwind PRD FY2026 (Google Doc)
 
-# Satellite PRD FY2026
+# Northwind PRD FY2026
 ...
 [markdown content displayed inline]
 ```
 
-### Step 3: Execute — Import Mode
+### Step 3c: Import Mode
 
 **Requires a CKW project.** Check for STATE.md:
 
@@ -124,7 +126,7 @@ or use /ckw:drive read to view the file without importing.
 2. Invoke gws-reader to fetch the content
 3. Determine the filename:
    - Use the Google file name, lowercased, spaces to hyphens, add `.md` extension
-   - Example: "Satellite PRD FY2026" → `satellite-prd-fy2026.md`
+   - Example: "Northwind PRD FY2026" → `northwind-prd-fy2026.md`
 4. Save the markdown content to `reference/{filename}.md`
 5. Create directories if needed: `reference/` and `reference/.index/`
 6. Invoke the **import-summarizer** skill on the saved file to generate the indexed summary at `reference/.index/{filename}.md`
@@ -133,9 +135,9 @@ Report:
 ```
 Imported from Google Drive!
 
-  Source: Satellite PRD FY2026 (Google Doc)
-  Saved:  reference/satellite-prd-fy2026.md
-  Index:  reference/.index/satellite-prd-fy2026.md
+  Source: Northwind PRD FY2026 (Google Doc)
+  Saved:  reference/northwind-prd-fy2026.md
+  Index:  reference/.index/northwind-prd-fy2026.md
   Tokens: ~4,500
 
 Next:
@@ -144,7 +146,7 @@ Next:
   /ckw:progress                       Full project status
 ```
 
-### Step 3: Execute — Upload Mode
+### Step 3d: Upload Mode
 
 1. Validate the local file exists
 2. Invoke the **gws-writer** skill:

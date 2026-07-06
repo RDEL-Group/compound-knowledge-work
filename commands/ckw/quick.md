@@ -92,6 +92,9 @@ Draft this as a complete, standalone piece of work. Use the project context
 (if available) to match tone and style. Flag anything that needs human input
 as [ACTION REQUIRED].
 
+Do NOT write a task summary — this is a quick task, so skip the executor's
+SUMMARY step. The output file is the only deliverable.
+
 ## Quality Criteria
 - [ ] Addresses the stated task fully and completely
 - [ ] Follows tone/voice from CONTEXT.md or SYSTEM.md (if available)

@@ -90,7 +90,7 @@ Create the following files in the current working directory:
 ## Key Context
 - **Owner:** [from interview]
 - **Timeline:** [start] – [end]
-- **What this is:** [one sentence — what Satellite is, what the RFP is for, etc.]
+- **What this is:** [one sentence — e.g., "the Northwind Q3 proposal", "the FY26 onboarding SOP"]
 - **Tech stack / tools:** [if applicable]
 
 ## Current Focus
@@ -221,7 +221,7 @@ blockers: []
 Project scoped. Ready for /ckw:plan-phase 1.
 
 ## Decisions Made
-[None yet — will be populated by /ckw:discuss-phase]
+[None yet — will be populated by /ckw:brainstorm]
 
 ## Open Questions
 [Categorize each question by blocking priority:]
@@ -296,18 +296,20 @@ fi
 Add the project to `~/.ckw/config.json` for easy access via path aliases:
 
 ```javascript
-// Read existing config
-const config = JSON.parse(fs.readFileSync('~/.ckw/config.json'));
+// Node — ~ is NOT expanded by fs, so resolve the home dir explicitly.
+const os = require("os"), path = require("path"), fs = require("fs");
+const configPath = path.join(os.homedir(), ".ckw", "config.json");
+const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
 
 // Add project entry (use folder name as default alias)
 if (!config.projects) config.projects = {};
 config.projects["[folder-name]"] = "[full-project-path]";
 
 // Save
-fs.writeFileSync('~/.ckw/config.json', JSON.stringify(config, null, 2));
+fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
 ```
 
-This enables: `/ckw:resume-work satellite` instead of typing the full path.
+This enables: `/ckw:resume-work northwind` instead of typing the full path.
 
 ### Step 7: Next Steps
 
@@ -319,7 +321,7 @@ Project scoped! Here's what to do next:
    Run /ckw:import-reference for each file to index it
 
 2. Start planning the first phase:
-   /ckw:discuss-phase 1    (capture your preferences before we plan)
+   /ckw:brainstorm 1    (capture your preferences before we plan)
    /ckw:plan-phase 1       (break it into tasks)
 
 3. Check status anytime:

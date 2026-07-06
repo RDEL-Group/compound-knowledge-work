@@ -17,7 +17,7 @@ Works for both resuming your own paused work and picking up a teammate's project
 **Examples:**
 ```
 /ckw:resume-work               # Resume project in current directory
-/ckw:resume-work satellite     # Resume by project alias (from config.json)
+/ckw:resume-work northwind     # Resume by project alias (from config.json)
 ```
 
 - `alias`: Project alias from `~/.ckw/config.json` → `projects` map (optional)
@@ -46,7 +46,7 @@ Three resolution modes, in priority order:
    ```
    Not in a CKW project directory. Your registered projects:
 
-     satellite    /path/to/Satellite-CKW
+     northwind    /path/to/northwind-proposal
      rfp-acme     /path/to/acme-rfp
 
    Run /ckw:resume-work [alias] to resume one, or navigate to the project folder.

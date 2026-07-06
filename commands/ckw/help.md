@@ -16,7 +16,7 @@ No flags needed.
 
 ## What This Command Does
 
-Detect project context, then display all 19 commands organized by workflow stage. No agent spawn — pure display.
+Detect project context, then display every command in `commands/ckw/` (enumerate at runtime — don't hardcode the count), organized by workflow stage. No agent spawn — pure display.
 
 ### Step 1: Detect Project Context
 
@@ -94,7 +94,7 @@ CKW Commands — Compound Knowledge Work
                              Example: /ckw:pause-work
 
   /ckw:resume-work           Resume with full context restoration
-                             Example: /ckw:resume-work satellite
+                             Example: /ckw:resume-work northwind
 
   /ckw:help                  This command
 
@@ -146,7 +146,7 @@ Full user guide: docs/USER-GUIDE.md
 - Commands are grouped by workflow stage, not alphabetically — this teaches the CKW workflow implicitly
 - Each command gets exactly one line of description + one line of example — scannable in 10 seconds
 - The contextual highlight tells the user what's relevant NOW without them having to figure it out
-- 19 total commands after Phase 4.6 (11 from Phases 1-3, 5 from Phase 4, 1 from Proof, 1 from GWS, 1 from Phase 4.6)
+- The command list is enumerated from `commands/ckw/` at runtime — never hardcode the count, so adding or removing a command can't drift this reference
 - This command is the reference companion to `docs/USER-GUIDE.md` (which is scenario-based, not command-based)
 
 ## Pipeline Mode

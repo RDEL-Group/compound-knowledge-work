@@ -67,7 +67,7 @@ When processing multiple files (e.g., during `/ckw:adopt-project`):
 Process each file sequentially. After all files, present a summary:
 ```
 Imported 4 reference files:
-  Satellite_PRD_FY2026.docx     (~4,500 tokens)  — Product requirements
+  Northwind_Q3_Proposal.docx    (~4,500 tokens)  — Product requirements
   Competitor_Analysis.pdf        (~2,100 tokens)  — Market research
   Brand_Guidelines.docx          (~1,800 tokens)  — Voice and tone
   Past_Proposal_Win.pdf          (~6,200 tokens)  — Reference example

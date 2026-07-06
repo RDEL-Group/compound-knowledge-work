@@ -11,7 +11,7 @@ A Claude Code plugin for knowledge work. CKW breaks complex projects — RFPs, p
 
 **Maintains quality at scale.** Every draft goes through a reviewer agent that classifies issues by severity (P1/P2/P3). High-stakes work gets a stress-test reviewer that attacks from hostile perspectives. A confidence check tells you what's solid vs. what's a guess.
 
-**Compounds what works.** After each project, CKW captures reusable patterns — what structure worked, what reviewers caught, what the client actually valued. These solutions surface automatically in future projects. The 20th RFP is measurably faster than the 2nd.
+**Compounds what works.** After each project, CKW captures reusable patterns — what structure worked, what reviewers caught, what the client actually valued. These solutions surface automatically in future projects, so your next one starts ahead of the last.
 
 **Handles the logistics.** Pause and resume with full handoff context. Import reference documents with token budgets. Export to Word, PowerPoint, or PDF. Search and read from Google Drive. Publish to Proof for collaborative review with AI provenance tracking.
 
@@ -32,6 +32,7 @@ A Claude Code plugin for knowledge work. CKW breaks complex projects — RFPs, p
 
 - [Claude Code](https://claude.ai/code) (CLI, desktop app, or IDE extension)
 - Node.js 18+
+- **OS:** macOS or Linux fully supported. Windows works for the core markdown workflow; the optional document-conversion and Google Drive scripts assume a Unix-like shell (WSL recommended).
 
 ### Option A: npx Installer (Recommended)
 
@@ -85,6 +86,10 @@ Run the same install command again. Your config and project registry are preserv
 | | `/ckw:pause-work` | Pause and capture handoff context |
 | | `/ckw:resume-work` | Resume with full context restoration |
 | | `/ckw:help` | Show all commands with examples |
+
+## Headless / Pipeline Mode
+
+Every command accepts `--headless`: it runs start to finish without interactive prompts, using sensible defaults. This makes CKW scriptable — chain commands, run them in CI, or schedule overnight jobs. Side-effecting steps fail closed (e.g., `/ckw:publish-proof --headless` refuses to publish without `--confirm-publish`, since publication is public and irreversible). Leave the flag off for normal interactive work.
 
 ## Architecture
 
@@ -149,8 +154,8 @@ CKW stands on the shoulders of several open-source projects:
 | [Compound Engineering](https://github.com/EveryInc/compound-engineering-plugin) (Every, Inc.) | Core knowledge compounding concept |
 | [Compound Knowledge Plugin](https://github.com/EveryInc/compound-knowledge-plugin) (Every, Inc.) | Confidence check, pipeline mode, stale knowledge patterns |
 | [Superpowers](https://github.com/obra/superpowers) (obra) | Anti-rationalization, self-review gates, hard gates |
-| [CoworkPowers](https://github.com/peterparker78/coworkpowers) (peterparker78) | Stakes-based scaling, stress-test review |
-| [GSD](https://github.com/jlowin/gsd) (jlowin) | Phased execution, fresh context per task |
+| [CoworkPowers](https://github.com/nabeelhyatt/coworkpowers) (nabeelhyatt) | Stakes-based scaling, stress-test review |
+| [GSD](https://github.com/gsd-build/get-shit-done) (archived Jun 2026; successor [open-gsd/gsd-core](https://github.com/open-gsd/gsd-core)) | Phased execution, fresh context per task |
 | [Proof](https://proofeditor.ai) (Every, Inc.) | AI provenance tracking |
 
 ## License

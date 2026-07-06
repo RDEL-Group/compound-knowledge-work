@@ -56,7 +56,7 @@ gws drive files list --params '{"q": "name contains '\''SEARCH_TERM'\''", "inclu
 4. **For each selected file:**
    - Detect mimeType and invoke the appropriate gws-reader mode (Doc, Sheet, or Slides)
    - Save the markdown output to `reference/{filename}.md` where filename is the Google file name lowercased with spaces as hyphens
-   - Example: "Satellite PRD FY2026" → `reference/satellite-prd-fy2026.md`
+   - Example: "Northwind Q3 Proposal" → `reference/northwind-q3-proposal.md`
 
 5. **Continue to Step 4** (Process Each File) with these saved local files. The import-summarizer skill generates indexed summaries as normal.
 

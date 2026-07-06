@@ -17,7 +17,7 @@ Search for relevant solutions, patterns, and templates from past projects and im
 ```
 
 - `<query>`: Free-text search (searched against titles, tags, and body content)
-- `--type`: Filter by solution type (pattern | template | methodology | checklist | insight)
+- `--type`: Filter by solution type (pattern | template | methodology | checklist | insight | all). `all` — or omitting the flag — searches every type.
 - `--tag`: Filter by tag
 - `--industry`: Filter by industry tag
 - `--confidence`: Filter by confidence level (high | medium | low)
@@ -71,7 +71,7 @@ For reference index files (`reference/.index/`), extract:
 
 Filter the collected files:
 
-1. **`--type` filter:** Match `type` field exactly
+1. **`--type` filter:** Match `type` field exactly (skip filtering when `all`, or when the flag is omitted)
 2. **`--tag` filter:** Match any tag in the `tags` array (case-insensitive)
 3. **`--industry` filter:** Match any tag containing the industry term
 4. **`--confidence` filter:** Match `confidence` field exactly

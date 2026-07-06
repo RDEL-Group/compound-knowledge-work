@@ -1,63 +1,72 @@
 # CKW User Guide
 
-CKW (Compound Knowledge Work) helps you plan, draft, review, and deliver knowledge work projects — RFPs, strategy docs, training materials, SOPs, client reports — using Claude Code. It breaks big projects into manageable tasks, tracks what you've done, and remembers what worked so your next project is faster and better.
+CKW (Compound Knowledge Work) helps you plan, draft, review, and deliver knowledge work — RFPs, proposals, strategy docs, training materials, SOPs, client reports — inside Claude Code. It breaks big projects into small tasks, tracks where you are, and remembers what worked so each project goes faster and lands better than the last.
+
+**Before you start:** You need Claude Code. Two things are optional: **pandoc** (only if you want to export drafts to Word, PowerPoint, or PDF) and the **`gws` CLI** (only if you want the Google Drive features).
 
 ## Starting a Project
 
-Have a new project to work on? Two ways to start:
+Say you've just landed the Northwind Q3 proposal. Three ways to begin:
 
-- **From a PRD or brief:** `/ckw:new-project --from-prd path/to/brief.pdf` — CKW reads your document and sets up the project structure automatically.
-- **From scratch:** `/ckw:new-project` — CKW interviews you about the project, then creates the structure.
-- **Existing folder:** `/ckw:adopt-project` — Already have files? CKW wraps them into its framework.
+- **From a brief:** `/ckw:new-project --from-prd path/to/brief.pdf` — CKW reads your document and sets up the project for you.
+- **From scratch:** `/ckw:new-project` — CKW interviews you, then builds the structure.
+- **Existing folder:** `/ckw:adopt-project` — Already have files scattered around? CKW wraps them into its framework.
 
-After setup, import any reference materials: `/ckw:import-reference reference/*.pdf`
+Pull in supporting material next: `/ckw:import-reference reference/*.pdf`. If a document lives on Google Drive, use `/ckw:drive import "Northwind brief"` to search, grab, and index it in one step.
 
 ## Planning and Executing
 
-For each phase of your project:
+Work happens one phase at a time:
 
-1. **Explore first (optional):** `/ckw:brainstorm 1` — Talk through your approach before committing. Captures decisions that the planner will honor.
-2. **Plan:** `/ckw:plan-phase 1` — Breaks the phase into specific, executable tasks with context budgets.
-3. **Execute:** `/ckw:execute-phase 1` — Drafts content task by task, each with fresh context so quality stays high.
+1. **Explore (optional):** `/ckw:brainstorm 1` — Talk through your approach before committing. CKW asks about your audience, your assumptions, and the **stakes** — who sees this and what depends on it. High-stakes phases automatically get a tougher, more skeptical review later. Decisions get saved so the planner honors them.
+2. **Check your footing (optional):** `/ckw:confidence` — A plain-language honesty check: what do you actually know versus what are you guessing? Useful before you plan something risky.
+3. **Plan:** `/ckw:plan-phase 1` — Breaks the phase into small, doable tasks. It also surfaces relevant patterns from past projects; search those directly anytime with `/ckw:search-solutions competitive analysis`.
+4. **Execute:** `/ckw:execute-phase 1` — Drafts content task by task, each with a fresh start so quality stays sharp.
 
 ## Reviewing Your Work
 
-After drafting, run a quality check: `/ckw:review-phase 1`
+Run a quality check once drafts exist: `/ckw:review-phase 1`.
 
-The reviewer checks against your requirements and flags issues by severity (P1 = must fix, P2 = should fix, P3 = nice to fix). P1 issues get automatic revision plans — fix them with `/ckw:execute-phase 1 --revisions`.
+The reviewer checks against your requirements and flags issues by severity — P1 (must fix), P2 (should fix), P3 (nice to fix). P1 issues get automatic revision plans; clear them with `/ckw:execute-phase 1 --revisions`.
 
-## Picking Up Someone's Project
+## Sharing for Feedback
 
-If a teammate paused their work with `/ckw:pause-work`, you can pick up where they left off:
-
-`/ckw:resume-work` — Shows you what was in flight, any blockers, and recommends exactly where to start. You can also use an alias: `/ckw:resume-work satellite`.
+To get teammates involved: `/ckw:publish-proof --phase 1` publishes your drafts to Proof, a review space where colleagues can comment. Proof shows what AI wrote versus what a human edited, so everyone sees the provenance. To share the finished files instead, upload straight to Drive with `/ckw:drive upload drafts/proposal.md`.
 
 ## Quick Tasks
 
-Need to draft an email or do a quick analysis without setting up a full project?
+Need a one-off — a status email, a fast analysis — without setting up a whole project?
 
-`/ckw:quick "Draft a status update email for the client"` — Runs the executor on a single task with minimal setup. Works even outside a CKW project.
-
-Capture ideas for later with `/ckw:add-todo "Look into bilingual version"`.
+`/ckw:quick "Draft a status update email for Northwind"` runs a single task with minimal setup. It works even outside a CKW project. Capture stray ideas for later with `/ckw:add-todo "Add a bilingual version"`.
 
 ## Exporting to Share
 
-Your drafts are in markdown. To share with clients or stakeholders:
+Drafts are plain markdown. To turn them into polished files (needs pandoc):
 
-- **Word doc:** "Export drafts/report.md to docx"
+- **Word doc:** "Export drafts/proposal.md to docx"
 - **Slide deck:** "Export drafts/deck.md to pptx"
-- **With branding:** "Export drafts/report.md to docx --template reference/templates/brand.docx"
+- **With branding:** "Export drafts/proposal.md to docx --template reference/templates/brand.docx"
+
+## Handing Off and Picking Up
+
+Stepping away? `/ckw:pause-work` saves what's in flight, any blockers, and the next steps. When you or a teammate return, `/ckw:resume-work` reloads the context and recommends exactly where to start (you can also pass a project alias: `/ckw:resume-work northwind`).
 
 ## Capturing What You Learned
 
-After completing a phase, capture what worked: `/ckw:compound` — CKW interviews you about the approach, files reusable solutions, and makes them searchable for future projects.
+This is where CKW compounds. After a phase, run `/ckw:compound` — it interviews you about what worked, files reusable solutions, and promotes the best patterns to your shared knowledge repo. When the whole project wraps, `/ckw:complete-project` runs a full retrospective and close-out.
 
-When the whole project is done: `/ckw:complete-project` — Full retrospective, project summary, and knowledge capture.
+## How Files Are Organized
 
-Search past learnings anytime: `/ckw:search-solutions competitive analysis`
+Every project keeps a few predictable folders. **`STATE.md`** is the project's status and settings (its frontmatter tracks the current phase). **`.planning/`** holds the phase plans, the per-task plans (`{N}-PLAN.md`), summaries, and review reports. **`drafts/`** is where your actual deliverable content lives. **`reference/.index/`** stores the short summaries of everything you've imported, so plans stay lightweight.
+
+## The Shared Knowledge Repo
+
+Separate from any single project is a shared knowledge repo — a folder (often on Google Drive) holding reusable **solutions, templates, and playbooks**. It's the memory that lets each project stand on the last: when `/ckw:compound` finds a pattern worth keeping, it promotes it here so your next proposal starts ahead of where the last one did.
+
+## Automation and Scripting
+
+Every command accepts **`--headless`**. In this mode it runs start to finish without stopping to ask questions, using sensible defaults — ideal for scripts, scheduled runs, or chaining commands into a pipeline. Side-effecting steps fail closed (for example, `/ckw:publish-proof --headless` won't publish without `--confirm-publish`). For day-to-day interactive work, just leave it off.
 
 ## Getting Help
 
-Run `/ckw:help` for a full command reference with examples, grouped by workflow stage.
-
-Run `/ckw:progress` anytime to see where your project stands and what to do next.
+Run `/ckw:help` for the full command list, grouped by workflow stage, with an example for each. Run `/ckw:progress` anytime to see where a project stands and what to do next.

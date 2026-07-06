@@ -196,7 +196,7 @@ Alternatives:
 
 ## Design Notes
 
-- This is the only CKW command that doesn't spawn an agent — it's conversational by nature
+- This command is conversational — Claude explores with you directly rather than spawning an agent (several lightweight commands also skip the agent spawn); it writes CONTEXT.md at the end
 - Don't try to be comprehensive — better to explore 3 things deeply than 10 things shallowly
 - The brainstorm should feel like talking to a smart colleague, not filling out a form
 - CONTEXT.md items marked as "Key Decisions" are treated as non-negotiable by the planner and executor

@@ -189,5 +189,5 @@ Next steps:
 
 - If folder doesn't exist, error with clear message
 - If folder is empty, suggest using `/ckw:new-project` instead
-- If folder already has CKW files (STATE.md, ROADMAP.md), ask: "This already looks like a CKW project. Resume with /ckw:progress?"
+- If folder already has CKW files (STATE.md, ROADMAP.md), ask: "This already looks like a CKW project. Continue with /ckw:resume-work?" (matches the headless behavior above)
 - If reorganization would break existing paths (e.g., relative links in docs), warn the user

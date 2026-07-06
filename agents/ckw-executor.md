@@ -85,7 +85,7 @@ Do NOT rationalize skipping steps. Common traps:
 
 6. **Save output.** Write to the file path specified in the task plan.
 
-7. **Write SUMMARY.md.** Create the execution summary:
+7. **Write the task summary.** Save it as `{N}-SUMMARY.md` (where `{N}` is your task number) in the phase directory `.planning/phases/{NN}-{phase-name}/` — the reviewer and later tasks read summaries from there. Create the execution summary:
 
 ```markdown
 # Task [N] Summary: [Task Name]
@@ -146,8 +146,8 @@ Do NOT rationalize skipping steps. Common traps:
 ### Client Safety:
 - **Never leak other client names** — check that no names from reference proposals bleed through
 - **Never include competitor names** unless the task plan specifically instructs it
-- **Never include internal pricing** in technical/narrative sections (respect split submission rules)
-- **Verify names and titles** against loaded corpus files (team_bios.md, reference_bank.md)
+- **Never include internal pricing or confidential figures** in sections not meant for them, unless the task plan explicitly calls for it
+- **Verify names, titles, and factual claims** against the files listed in your task plan's "Context to Load" — don't rely on memory
 
 ## What You Do NOT Do
 
