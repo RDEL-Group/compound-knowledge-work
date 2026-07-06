@@ -24,7 +24,7 @@ Import reference documents into a CKW project. Each document is converted to rea
 
 ## What This Command Does
 
-Use the **import-summarizer** skill to convert and index each reference document. This is a lightweight command — no agent spawn needed.
+Use the **import-summarizer** skill to convert and index each reference document. For a handful of files this runs inline (no agent spawn needed). For large batches (**more than 10 files**), fan the conversion + summarization out to subagents so raw document text doesn't exhaust the main context — see Step 4.
 
 ### Step 1: Validate Project
 
@@ -107,17 +107,27 @@ Create `reference/` and `reference/.index/` if they don't exist. If the source f
 
 ### Step 4: Process Each File
 
-For each file, invoke the **import-summarizer** skill. See `skills/import-summarizer/SKILL.md` for the full conversion and summarization process.
+Decide inline vs. fan-out first:
+- **≤ 10 files:** process inline in this session.
+- **> 10 files:** fan out — spawn a subagent per batch (~5–10 files each) to convert and summarize, and have each return only its `.index/` summary entries. This keeps raw document text out of the main context. Collect the returned entries, then continue.
 
-The skill:
-1. Converts the file to readable text (textutil → pandoc → Python fallback)
-2. Generates a summary with YAML frontmatter
+For each file:
+
+**4a. Check for an existing summary first** — *before* any conversion, so an existing summary is never overwritten by accident. If `reference/.index/{filename}.md` already exists:
+```
+Summary already exists for [filename]. Re-import (overwrites), or skip?
+```
+For a batch, offer: "Re-import all existing, skip all existing, or ask for each?" If the user skips, move to the next file without converting.
+
+**4b. Convert and summarize** by invoking the **import-summarizer** skill (see `skills/import-summarizer/SKILL.md`). The skill:
+1. Converts the file to readable text — **PDF via Claude's Read tool; .docx/.pptx/.html/.rtf via `scripts/convert_document.sh`; .txt/.md read directly**
+2. Generates a summary with YAML frontmatter (`tokens_estimated`, sections, …)
 3. Saves to `reference/.index/{filename}.md`
 
 Report progress after each file:
 ```
 [1/3] client-brief.pdf
-      Format: PDF → text via textutil
+      Format: PDF → text via Read tool
       Summary: reference/.index/client-brief.md
       Tokens: ~4,500 | Sections: 7 | Key: requirements, timeline, budget
 ```
@@ -125,22 +135,11 @@ Report progress after each file:
 If a file fails conversion, report the error and continue with the next file:
 ```
 [2/3] competitor-analysis.docx
-      ⚠ Conversion failed: textutil not available, pandoc not installed
+      ⚠ Conversion failed: no converter available (pandoc not installed)
       Skipped. Install pandoc: brew install pandoc
 ```
 
-### Step 5: Check for Existing Summaries
-
-Before processing each file, check if `reference/.index/{filename}.md` already exists.
-
-**If summary exists:**
-```
-Summary already exists for [filename]. Re-import (overwrites), or skip?
-```
-
-Wait for user response. If batch processing, offer: "Re-import all existing, skip all existing, or ask for each?"
-
-### Step 6: Context Budget Report
+### Step 5: Context Budget Report
 
 After all files are processed, calculate and report the total reference budget:
 
@@ -166,14 +165,14 @@ The planner will use summaries instead of full documents and may split reference
 Consider identifying which references are most critical for each phase.
 ```
 
-### Step 7: Update STATE.md
+### Step 6: Update STATE.md
 
 Add to the Current Status section:
 ```
 [N] reference documents imported. Total reference budget: ~[N] tokens.
 ```
 
-### Step 8: Save Progress
+### Step 7: Save Progress
 
 **If local/git repo:**
 ```bash
@@ -184,7 +183,7 @@ git commit -m "CKW: [N] reference documents imported"
 
 **If Google Drive / cloud storage:** Skip git. Files are auto-saved by Drive.
 
-### Step 9: Suggest Next Steps
+### Step 8: Suggest Next Steps
 
 ```
 Next:
@@ -199,10 +198,10 @@ Next:
 **`--headless` behavior:** Import all files without confirmation prompts.
 
 - **Batch confirmation (Step 2):** Skip. Process all supported files found at the path.
-- **Existing summaries (Step 5):** Skip existing summaries (do not re-import). To force re-import in headless mode, delete the existing summary first.
+- **Existing summaries (Step 4a):** Skip existing summaries (do not re-import). To force re-import in headless mode, delete the existing summary first.
 - **`--from-drive` search results:** Not supported in headless mode. Use a specific file ID instead of a search term. If a search term is provided with `--headless`, return error: "Headless mode requires a specific file ID for --from-drive, not a search term."
 - **All file writes and git commits:** Proceed without confirmation.
-- **Context budget report (Step 6):** Still generated.
+- **Context budget report (Step 5):** Still generated.
 
 ## Error Handling
 

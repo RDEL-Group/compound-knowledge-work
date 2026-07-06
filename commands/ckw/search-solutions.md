@@ -64,7 +64,7 @@ For reference index files (`reference/.index/`), extract:
 - `title` — Document name
 - `type` — Set to "reference"
 - `tags` — From the summary's key topics
-- `token_estimate` — Token count
+- `tokens_estimated` — Token count
 - `sections` — Major sections list
 
 ### Step 3: Apply Filters

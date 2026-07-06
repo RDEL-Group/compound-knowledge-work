@@ -6,7 +6,7 @@ description: >
   to "import a document", "convert a PDF", "read a .docx file", "summarize a reference",
   "process reference materials", or when any CKW agent needs to convert non-markdown
   files to readable text and generate summaries for the reference index.
-compatibility: macOS (textutil), pandoc, or python3 with python-docx/PyPDF2
+compatibility: pandoc (docx/pptx/html/rtf), textutil (macOS), python-docx (optional docx fallback); PDFs use Claude's native Read tool
 ---
 
 # Import Summarizer
@@ -23,20 +23,24 @@ Convert and process reference materials into indexed, context-budget-friendly su
 
 ### Supported formats
 
-| Format | macOS (preferred) | Cross-platform fallback | Last resort |
-|--------|-------------------|------------------------|-------------|
-| .docx | `textutil -convert txt -stdout` | `pandoc -t markdown` | `python3` with python-docx |
-| .pdf | `textutil -convert txt -stdout` | `pandoc -t markdown` | `python3` with PyPDF2 |
-| .pptx | `textutil -convert txt -stdout` | `pandoc -t markdown` | `python3` with python-pptx |
-| .txt | Direct read | Direct read | Direct read |
-| .md | Direct read | Direct read | Direct read |
-| .html | `textutil -convert txt -stdout` | `pandoc -t markdown` | Strip tags with sed |
+| Format | How CKW converts it |
+|--------|---------------------|
+| **.pdf** | **Claude's native Read tool** — read the file directly, no script. Claude extracts PDF text and layout natively, which is more reliable than any shell converter. |
+| .docx | `scripts/convert_document.sh` — pandoc → textutil (macOS) → python-docx |
+| .pptx | `scripts/convert_document.sh` — pandoc (needs pandoc ≥ 3.7, which reads PowerPoint natively) |
+| .html / .htm | `scripts/convert_document.sh` — pandoc → textutil (macOS) |
+| .rtf | `scripts/convert_document.sh` — textutil (macOS) → pandoc |
+| .txt / .md | Direct read — no conversion |
 
 ### Convert the document
 
-Execute `scripts/convert_document.sh <filepath>` for document conversion. The script uses a cascading fallback strategy: textutil (macOS) → pandoc → Python libraries.
+Detect the file type from its extension (matched case-insensitively — `Report.DOCX` is fine):
 
-Detect the file type from its extension. For `.md` and `.txt`, read directly. For all other supported formats, run the conversion script. If no converter is available, tell the user what to install.
+- **.pdf** — Do **not** run the script. Use Claude's **Read tool** on the file directly; it extracts text and layout natively. (Older docs referenced a PyPDF2 fallback and a python-pptx path — neither was ever implemented, and neither is needed.)
+- **.txt / .md** — Read directly.
+- **.docx / .pptx / .html / .rtf** — Run `scripts/convert_document.sh <filepath>` (path relative to this SKILL.md). The script picks the right converter per format, verifies the output is non-empty before reporting success, and prints a clear error (including the converter's own stderr) if conversion fails. If it reports that no converter is available, tell the user what to install.
+
+The script now fails loudly on empty/garbled output rather than returning silent garbage (the old behaviour for PDF and PowerPoint via `textutil`). If conversion fails, surface the error and offer to have the user paste the content manually.
 
 ## Summarization
 

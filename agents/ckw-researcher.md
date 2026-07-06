@@ -52,7 +52,7 @@ Read ROADMAP.md for this phase's goals and expected outputs. Read REQUIREMENTS.m
 Read every file in `reference/.index/`. For each reference:
 - **Identify relevant sections** — Which sections relate to this phase's goals?
 - **Note specifics** — Exact numbers, quotes, requirements, or data points that the executor will need
-- **Calculate token estimate** — Use the summary's `token_estimate` field for the full doc. For specific sections, estimate: section_word_count × 1.3
+- **Calculate token estimate** — Use the summary's `tokens_estimated` field for the full doc. For specific sections, estimate: section_word_count × 1.3
 - **Recommend loading strategy:**
   - **Load full** — Document is small (<5K tokens) and highly relevant
   - **Load section** — Only specific sections are relevant; name them

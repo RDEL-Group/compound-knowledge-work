@@ -1,45 +1,126 @@
 #!/usr/bin/env bash
 # CKW Import Summarizer — Document Conversion Script
-# Converts .docx, .pdf, .pptx, .html, .rtf files to plain text/markdown
-# Uses platform-aware cascading fallback: textutil → pandoc → Python
+#
+# Converts .docx, .pptx, .html, .rtf, .txt, .md files to plain text / markdown.
+#
+# PDF is intentionally NOT handled here — Claude reads PDFs with its native
+# Read tool, which extracts text and layout far better than any shell converter.
+# Calling this script with a .pdf returns an error pointing at the Read tool.
+#
+# Per-format strategy (the first converter that yields NON-EMPTY output wins):
+#   .docx        pandoc -> textutil (macOS) -> python-docx
+#   .pptx        pandoc   (requires pandoc >= 3.7; textutil emits empty output for pptx)
+#   .html/.htm   pandoc -> textutil (macOS)
+#   .rtf         textutil (macOS) -> pandoc
+#   .txt/.md     direct read
+#
+# The script never emits empty output while claiming success, matches the file
+# extension case-insensitively, and surfaces the converter's own stderr on failure.
 
-set -euo pipefail
+set -uo pipefail   # NB: no -e — a failed converter attempt must fall through to the next.
+
+# Print $1 to stdout only if it contains at least one non-whitespace character.
+emit_if_nonempty() {
+  if printf '%s' "$1" | grep -q '[^[:space:]]'; then
+    printf '%s\n' "$1"
+    return 0
+  fi
+  return 1
+}
+
+# convert_with <errfile> <command...>
+# Runs the command, capturing stdout; on non-empty success echoes it and returns 0.
+# Converter stderr is captured to <errfile> (surfaced by the caller on total failure).
+convert_with() {
+  local errfile="$1"; shift
+  local out rc
+  out="$("$@" 2>"$errfile")" && rc=0 || rc=$?
+  [ "$rc" -eq 0 ] || return 1
+  emit_if_nonempty "$out"
+}
 
 convert_document() {
   local filepath="$1"
   local ext="${filepath##*.}"
+  ext="$(printf '%s' "$ext" | tr '[:upper:]' '[:lower:]')"   # case-insensitive: Report.DOCX == report.docx
+
+  if [ ! -f "$filepath" ]; then
+    echo "ERROR: File not found: $filepath" >&2
+    return 1
+  fi
+
+  local errfile; errfile="$(mktemp)"
+  trap 'rm -f "$errfile"' RETURN
 
   case "$ext" in
     md|txt)
       cat "$filepath"
       ;;
-    docx|pdf|pptx|html|rtf)
-      # Try textutil first (macOS)
-      if command -v textutil &>/dev/null; then
-        textutil -convert txt -stdout "$filepath" 2>/dev/null && return 0
-      fi
-      # Try pandoc
-      if command -v pandoc &>/dev/null; then
-        pandoc "$filepath" -t markdown 2>/dev/null && return 0
-      fi
-      # Python fallback for .docx
-      if [ "$ext" = "docx" ] && python3 -c "import docx" 2>/dev/null; then
-        python3 -c "
+
+    pdf)
+      echo "ERROR: PDF conversion is handled by Claude's native Read tool, not this script." >&2
+      echo "       Read the .pdf directly — do not route it through convert_document.sh." >&2
+      return 1
+      ;;
+
+    docx)
+      command -v pandoc   >/dev/null 2>&1 && convert_with "$errfile" pandoc "$filepath" -t markdown && return 0
+      command -v textutil >/dev/null 2>&1 && convert_with "$errfile" textutil -convert txt -stdout "$filepath" && return 0
+      if python3 -c "import docx" >/dev/null 2>&1; then
+        local out rc
+        # Filepath passed as an argv, never interpolated into source — safe for
+        # apostrophes/spaces and not a code-execution vector.
+        out="$(python3 - "$filepath" 2>"$errfile" <<'PY'
+import sys
 from docx import Document
-doc = Document('$filepath')
+doc = Document(sys.argv[1])
 for p in doc.paragraphs:
     print(p.text)
 for table in doc.tables:
     for row in table.rows:
         print(' | '.join(cell.text for cell in row.cells))
-" && return 0
+PY
+)" && rc=0 || rc=$?
+        [ "$rc" -eq 0 ] && emit_if_nonempty "$out" && return 0
       fi
-      echo "ERROR: No converter available for .$ext files."
-      echo "Install one of: textutil (macOS), pandoc, or python3 with python-docx"
+      echo "ERROR: Could not extract text from .docx (tried pandoc, textutil, python-docx)." >&2
+      [ -s "$errfile" ] && sed 's/^/  /' "$errfile" >&2
+      echo "  Install pandoc (brew install pandoc) or python-docx (pip install python-docx)." >&2
       return 1
       ;;
+
+    pptx)
+      # Modern pandoc (>= 3.7) reads PowerPoint natively; textutil emits empty output for pptx.
+      command -v pandoc >/dev/null 2>&1 && convert_with "$errfile" pandoc "$filepath" -t markdown && return 0
+      echo "ERROR: .pptx requires pandoc >= 3.7 (pandoc reads PowerPoint natively)." >&2
+      if command -v pandoc >/dev/null 2>&1; then
+        echo "  Installed: $(pandoc --version | head -1). Upgrade if older than 3.7." >&2
+      else
+        echo "  Install pandoc: brew install pandoc" >&2
+      fi
+      [ -s "$errfile" ] && sed 's/^/  /' "$errfile" >&2
+      return 1
+      ;;
+
+    html|htm)
+      command -v pandoc   >/dev/null 2>&1 && convert_with "$errfile" pandoc "$filepath" -t markdown && return 0
+      command -v textutil >/dev/null 2>&1 && convert_with "$errfile" textutil -convert txt -stdout "$filepath" && return 0
+      echo "ERROR: Could not convert .html (tried pandoc, textutil)." >&2
+      [ -s "$errfile" ] && sed 's/^/  /' "$errfile" >&2
+      return 1
+      ;;
+
+    rtf)
+      command -v textutil >/dev/null 2>&1 && convert_with "$errfile" textutil -convert txt -stdout "$filepath" && return 0
+      command -v pandoc   >/dev/null 2>&1 && convert_with "$errfile" pandoc "$filepath" -t markdown && return 0
+      echo "ERROR: Could not convert .rtf (tried textutil, pandoc)." >&2
+      [ -s "$errfile" ] && sed 's/^/  /' "$errfile" >&2
+      return 1
+      ;;
+
     *)
-      echo "ERROR: Unsupported file format: .$ext"
+      echo "ERROR: Unsupported file format: .$ext" >&2
+      echo "       Supported: .docx .pptx .html .rtf .txt .md   (PDF via Claude's Read tool)" >&2
       return 1
       ;;
   esac
