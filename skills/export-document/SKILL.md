@@ -152,7 +152,7 @@ Then suggest: "PDF generation requires a LaTeX engine. Exported as HTML instead.
 **After every template export for .docx or .pptx**, run the fix script:
 
 ```bash
-python3 ~/.claude/skills/export-document/scripts/fix_docx_content_types.py "[output-path]"
+python3 scripts/fix_docx_content_types.py "[output-path]"
 ```
 
 This script:

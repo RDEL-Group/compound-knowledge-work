@@ -83,6 +83,8 @@ gws drive files list --params '{"q": "name = '\''FOLDER_NAME'\'' and mimeType = 
 
 If multiple folders match, present a numbered list and ask which one.
 
+> **Escaping apostrophes:** if `FOLDER_NAME` or `FILENAME` contains an apostrophe, escape it as `\'` inside the query (e.g., `O'Brien Folder` → `O\'Brien Folder`) — otherwise the Drive `q` string terminates early and the lookup fails.
+
 **If no folder specified:** Ask the user where to upload:
 ```
 Where should this file go? You can:
@@ -93,18 +95,15 @@ Where should this file go? You can:
 
 ### Step 3: Upload the file
 
+Include `supportsAllDrives` unconditionally — the Step 2 folder search can return Shared Drive folders, and an upload without it 404s on those:
+
 ```bash
-gws drive files create --json '{"name": "FILENAME", "parents": ["FOLDER_ID"]}' --upload "LOCAL_FILE_PATH"
+gws drive files create --json '{"name": "FILENAME", "parents": ["FOLDER_ID"]}' --params '{"supportsAllDrives": true}' --upload "LOCAL_FILE_PATH"
 ```
 
 **To upload to My Drive root (no folder):**
 ```bash
-gws drive files create --json '{"name": "FILENAME"}' --upload "LOCAL_FILE_PATH"
-```
-
-**To upload to a Shared Drive folder:**
-```bash
-gws drive files create --json '{"name": "FILENAME", "parents": ["FOLDER_ID"]}' --params '{"supportsAllDrives": true}' --upload "LOCAL_FILE_PATH"
+gws drive files create --json '{"name": "FILENAME"}' --params '{"supportsAllDrives": true}' --upload "LOCAL_FILE_PATH"
 ```
 
 ### Step 4: Verify and report
@@ -142,14 +141,14 @@ pandoc -f markdown -t docx -o /tmp/ckw-gws-upload.docx "MARKDOWN_FILE_PATH"
 ### Step 3: Upload with Google Docs conversion
 
 ```bash
-gws drive files create --json '{"name": "DOC_TITLE", "parents": ["FOLDER_ID"], "mimeType": "application/vnd.google-apps.document"}' --upload "/tmp/ckw-gws-upload.docx"
+gws drive files create --json '{"name": "DOC_TITLE", "parents": ["FOLDER_ID"], "mimeType": "application/vnd.google-apps.document"}' --params '{"supportsAllDrives": true}' --upload "/tmp/ckw-gws-upload.docx"
 ```
 
 The `mimeType: application/vnd.google-apps.document` tells Drive to convert the uploaded file to a native Google Doc.
 
 **If uploading .md directly (no pandoc):**
 ```bash
-gws drive files create --json '{"name": "DOC_TITLE", "parents": ["FOLDER_ID"], "mimeType": "application/vnd.google-apps.document"}' --upload "MARKDOWN_FILE_PATH"
+gws drive files create --json '{"name": "DOC_TITLE", "parents": ["FOLDER_ID"], "mimeType": "application/vnd.google-apps.document"}' --params '{"supportsAllDrives": true}' --upload "MARKDOWN_FILE_PATH"
 ```
 
 ### Step 4: Report

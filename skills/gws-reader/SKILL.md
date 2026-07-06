@@ -81,6 +81,8 @@ gws drive files list --params '{"q": "name contains '\''SEARCH_TERM'\''", "drive
 gws drive drives list
 ```
 
+> **Escaping apostrophes:** if `SEARCH_TERM` contains an apostrophe, escape it as `\'` inside the query (e.g., `O'Brien` → `O\'Brien`) — otherwise the Drive `q` string terminates early and the search fails or returns wrong results.
+
 ### Step 2: Present results
 
 Map mimeType to friendly labels:
@@ -104,6 +106,8 @@ No files found matching "SEARCH_TERM" on any Drive.
 Try a different search term, or check the file name in Google Drive.
 ```
 
+> **Script paths** below (`scripts/…`) are relative to this SKILL.md — the skill's own install directory. Do not hardcode `~/.claude/...`; that path doesn't exist under marketplace installs.
+
 ## Mode: Read Google Doc
 
 ### Step 1: Fetch document
@@ -115,7 +119,7 @@ gws docs documents get --params '{"documentId": "DOC_ID"}' > /tmp/ckw-gws-doc.js
 ### Step 2: Convert to markdown
 
 ```bash
-python3 ~/.claude/skills/gws-reader/scripts/docs_to_markdown.py /tmp/ckw-gws-doc.json
+python3 scripts/docs_to_markdown.py /tmp/ckw-gws-doc.json
 ```
 
 The script converts the Docs API JSON to clean markdown:
@@ -159,7 +163,7 @@ gws sheets spreadsheets values get --params '{"spreadsheetId": "SHEET_ID", "rang
 ### Step 3: Convert to markdown table
 
 ```bash
-python3 ~/.claude/skills/gws-reader/scripts/sheets_to_markdown.py /tmp/ckw-gws-sheet.json "SHEET_NAME"
+python3 scripts/sheets_to_markdown.py /tmp/ckw-gws-sheet.json "SHEET_NAME"
 ```
 
 The script converts the values array to a markdown table with headers, separators, and data rows. Truncates at 1000 rows with a warning.
@@ -179,7 +183,7 @@ gws slides presentations get --params '{"presentationId": "SLIDES_ID"}' > /tmp/c
 ### Step 2: Convert to markdown
 
 ```bash
-python3 ~/.claude/skills/gws-reader/scripts/slides_to_markdown.py /tmp/ckw-gws-slides.json
+python3 scripts/slides_to_markdown.py /tmp/ckw-gws-slides.json
 ```
 
 The script converts the Slides API JSON to markdown:
@@ -213,7 +217,16 @@ When another skill or command needs the content saved (e.g., import-reference):
 
 ```bash
 gws docs documents get --params '{"documentId": "DOC_ID"}' > /tmp/ckw-gws-doc.json
-python3 ~/.claude/skills/gws-reader/scripts/docs_to_markdown.py /tmp/ckw-gws-doc.json > "OUTPUT_PATH"
+python3 scripts/docs_to_markdown.py /tmp/ckw-gws-doc.json > "OUTPUT_PATH"
+rm -f /tmp/ckw-gws-doc.json
+```
+
+## Clean up temp files
+
+The read modes write intermediate JSON to `/tmp/ckw-gws-*.json`, which can contain confidential document content. Delete these once you've converted and displayed (or saved) the result:
+
+```bash
+rm -f /tmp/ckw-gws-doc.json /tmp/ckw-gws-sheet.json /tmp/ckw-gws-sheets-meta.json /tmp/ckw-gws-slides.json
 ```
 
 ## Error Handling

@@ -88,7 +88,7 @@ Read `~/.ckw/config.json` and look for the `proof` section:
 Verify the Proof server is reachable:
 
 ```bash
-curl -s -o /dev/null -w "%{http_code}" "{base_url}/health"
+curl -s --max-time 10 -o /dev/null -w "%{http_code}" "{base_url}/health"
 ```
 
 - **If 200:** Proceed
@@ -116,7 +116,7 @@ Extract the title:
 ### Step 4: Create Proof Document
 
 ```bash
-curl -s -X POST "{base_url}/share/markdown" \
+curl -s --max-time 60 -X POST "{base_url}/share/markdown" \
   -H "Content-Type: application/json" \
   -d '{"title": "{title}", "markdown": "{markdown_content}"}'
 ```
@@ -132,7 +132,7 @@ with open(sys.argv[1]) as f:
 print(json.dumps({'title': sys.argv[2], 'markdown': md}))
 " "{source_file}" "{title}" > /tmp/ckw-proof-payload.json
 
-curl -s -X POST "{base_url}/share/markdown" \
+curl -s --max-time 60 -X POST "{base_url}/share/markdown" \
   -H "Content-Type: application/json" \
   -d @/tmp/ckw-proof-payload.json
 
@@ -171,7 +171,7 @@ If review comments are provided (from REVIEW_REPORT.md), push each as a Proof co
 
 For each comment:
 ```bash
-curl -s -X POST "{base_url}/api/agent/{slug}/ops" \
+curl -s --max-time 30 -X POST "{base_url}/api/agent/{slug}/ops" \
   -H "Content-Type: application/json" \
   -H "x-share-token: {accessToken}" \
   -H "X-Agent-Id: ckw-reviewer" \
@@ -191,7 +191,7 @@ curl -s -X POST "{base_url}/api/agent/{slug}/ops" \
 The response will contain `"code": "quote_not_found"`. In this case, retry without the quote field to post as an unanchored document comment:
 
 ```bash
-curl -s -X POST "{base_url}/api/agent/{slug}/ops" \
+curl -s --max-time 30 -X POST "{base_url}/api/agent/{slug}/ops" \
   -H "Content-Type: application/json" \
   -H "x-share-token: {accessToken}" \
   -H "X-Agent-Id: ckw-reviewer" \

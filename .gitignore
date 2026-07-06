@@ -2,3 +2,7 @@ node_modules/
 .DS_Store
 *.log
 .env
+
+# Python bytecode (from running skill scripts locally)
+__pycache__/
+*.pyc
