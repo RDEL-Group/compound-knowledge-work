@@ -45,7 +45,7 @@ CKW is a zero-dependency Claude Code plugin. Everything is markdown and vanilla 
 | 19 slash commands | `commands/ckw/` | Markdown (`.md`) |
 | 7 agents | `agents/` | Markdown agent definitions |
 | 5 skills | `skills/*/SKILL.md` | SKILL.md + optional scripts |
-| 3 hooks | `hooks/` | JavaScript / shell |
+| 1 hook | `hooks/` | JavaScript (`.js`) + `hooks.json` manifest |
 | Installer | `bin/install.js` | Node.js (stdlib only) |
 
 **Key design principle:** zero npm dependencies. The installer, hooks, and skill scripts use only Node.js built-ins and system tools (bash, python3, pandoc, curl). This keeps installation instant and avoids supply-chain risk.

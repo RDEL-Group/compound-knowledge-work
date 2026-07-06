@@ -176,7 +176,7 @@ git commit -m "CKW: Work resumed — [phase name]"
 
 ## Relationship to SessionStart Hook
 
-The `ckw-session-init.sh` hook runs automatically on every new Claude Code session and shows a brief 2-3 line status. `/ckw:resume-work` is the manual, comprehensive version:
+The `ckw-session-init.js` hook runs automatically on every new Claude Code session and shows a brief 2-3 line status. `/ckw:resume-work` is the manual, comprehensive version:
 
 | Aspect | SessionStart Hook | /ckw:resume-work |
 |--------|------------------|------------------|

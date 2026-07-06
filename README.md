@@ -54,13 +54,9 @@ git clone https://github.com/RDEL-Group/compound-knowledge-work.git /tmp/ckw-ins
 /plugin install compound-knowledge-work
 ```
 
-This installs commands, agents, and skills. CKW's hooks (auto-detection of project directories on session start) need one extra step:
+One step — this installs commands, agents, skills, and the SessionStart hook (project auto-detection), which ships in the plugin's bundled `hooks/hooks.json`.
 
-```bash
-npx --yes github:RDEL-Group/compound-knowledge-work
-```
-
-The installer detects that the plugin is already present and only registers the SessionStart hook + creates your config.
+To connect a shared team knowledge repo (optional), add its path to `~/.ckw/config.json` under `knowledge_repos` (see [Shared Knowledge Repo](#shared-knowledge-repo)), or run the npx installer once to set it up interactively.
 
 ### Update
 
@@ -97,7 +93,7 @@ CKW is a zero-dependency Claude Code plugin. Everything is markdown and vanilla 
 - **19 slash commands** (`commands/ckw/`) — markdown files that define the command interface
 - **7 specialized agents** (`agents/`) — scoper, planner, executor, reviewer, stress-test reviewer, compounder, researcher
 - **5 skills** (`skills/`) — import/export, Google Workspace, Proof integration
-- **3 hooks** (`hooks/`) — context monitoring, status display, session auto-detection
+- **1 hook** (`hooks/`) — SessionStart project auto-detection (bundled via `hooks/hooks.json`)
 
 No npm dependencies. No build step. Installation is instant.
 

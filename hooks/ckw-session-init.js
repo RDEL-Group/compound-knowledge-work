@@ -5,21 +5,14 @@
  * project status so users don't need to manually invoke a command.
  *
  * Reads STATE.md to get project name, phase, and status.
- * Outputs context message that gets injected into the conversation.
+ * Outputs a context message that gets injected into the conversation.
  * Silently no-ops if not in a CKW project directory.
  *
- * Configuration: Add to ~/.claude/settings.json:
- * {
- *   "hooks": {
- *     "SessionStart": [{
- *       "matcher": "startup|resume",
- *       "hooks": [{
- *         "type": "command",
- *         "command": "node ~/.claude/hooks/ckw-session-init.js"
- *       }]
- *     }]
- *   }
- * }
+ * Registration:
+ *   - Marketplace installs: shipped via hooks/hooks.json (auto-discovered).
+ *   - npx installs: registered in settings.json by bin/install.js.
+ * Both point SessionStart (matcher "startup|resume") at this file. This is
+ * the single cross-platform hook — Node is guaranteed wherever Claude Code runs.
  */
 
 const fs = require("fs");
@@ -42,12 +35,32 @@ function parseYamlFrontmatter(content) {
   return result;
 }
 
+// Catches both action-item forms CKW commands emit:
+//   1. [ACTION REQUIRED: description]        (ckw-executor form — text inside brackets)
+//   2. [ACTION REQUIRED] trailing text ...   (adopt-project / new-project / plan-phase form)
+//      including markdown-emphasised **[ACTION REQUIRED]** variants.
 function findActionItems(content) {
   const items = [];
-  const regex = /\[ACTION REQUIRED[:\s]*([^\]]*)\]/gi;
-  let match;
-  while ((match = regex.exec(content)) !== null) {
-    if (match[1]) items.push(match[1].trim());
+  for (const line of content.split("\n")) {
+    // Require the opening bracket so prose mentions ("action required soon")
+    // don't register as items — both documented forms bracket the marker.
+    if (!/\[ACTION REQUIRED/i.test(line)) continue;
+
+    let text;
+    const bracketed = line.match(/\[ACTION REQUIRED[:\s]+([^\]]+)\]/i);
+    if (bracketed && bracketed[1].trim()) {
+      // Form 1: description lives inside the brackets after the colon.
+      text = bracketed[1].trim();
+    } else {
+      // Form 2: strip through the marker (and any closing bracket / colon / **),
+      // then take the trailing text.
+      text = line
+        .replace(/.*ACTION REQUIRED[\]:*\s]*/i, "")
+        .replace(/^[-*\s]+/, "")
+        .trim();
+    }
+
+    if (text) items.push(text);
   }
   return items;
 }
@@ -96,19 +109,37 @@ function main() {
 
       lines.push("");
 
-      // Suggest next command based on status
-      if (status === "planned") {
-        lines.push("Ready to execute. Run /ckw:execute-phase to start drafting.");
-      } else if (status === "in-progress" || status === "executing") {
-        lines.push("Execution in progress. Run /ckw:execute-phase to continue.");
-      } else if (status === "drafted") {
-        lines.push("Drafts complete. Run /ckw:review-phase to review.");
-      } else if (status === "reviewed") {
-        lines.push("Review complete. Run /ckw:compound to capture learnings, or /ckw:complete-project to close out.");
-      } else if (status === "paused") {
-        lines.push("Project paused. Run /ckw:resume-work to pick up with handoff context.");
-      } else {
-        lines.push("Run /ckw:progress for full project status.");
+      // Suggest next command based on the STATE.md status field.
+      // Covers the canonical status enum; values commands write today are
+      // scoped / in-progress / reviewing / complete / paused.
+      switch (status) {
+        case "scoped":
+          lines.push("Project scoped. Run /ckw:brainstorm to explore the approach, or /ckw:plan-phase to break the next phase into tasks.");
+          break;
+        case "planned":
+          lines.push("Phase planned. Run /ckw:execute-phase to start drafting.");
+          break;
+        case "in-progress":
+        case "executing":
+          lines.push("Work in progress. Run /ckw:execute-phase to continue, or /ckw:resume-work for full context.");
+          break;
+        case "drafted":
+          lines.push("Drafts complete. Run /ckw:review-phase to run a quality check.");
+          break;
+        case "reviewing":
+          lines.push("Content under review. Check REVIEW_REPORT.md, then /ckw:execute-phase --revisions for any P1 fixes.");
+          break;
+        case "reviewed":
+          lines.push("Review complete. Run /ckw:compound to capture what worked, or /ckw:complete-project to close out.");
+          break;
+        case "complete":
+          lines.push("Project complete. Run /ckw:compound to capture additional learnings, or /ckw:search-solutions to reuse patterns.");
+          break;
+        case "paused":
+          lines.push("Project paused. Run /ckw:resume-work to pick up with handoff context.");
+          break;
+        default:
+          lines.push("Run /ckw:progress for full project status.");
       }
 
       process.stdout.write(lines.join("\n"));

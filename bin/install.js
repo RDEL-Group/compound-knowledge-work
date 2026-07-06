@@ -7,6 +7,7 @@
  * Sets up commands, agents, skills, and hooks for Claude Code.
  *
  * Usage: npx compound-knowledge-work@latest
+ *        node bin/install.js --defaults   # non-interactive (CI); project-local install
  */
 
 const fs = require("fs");
@@ -48,10 +49,19 @@ function ensureDir(dir) {
 // ─── Main ──────────────────────────────────────────────────────────────────
 
 async function main() {
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
+  // --defaults runs non-interactively (used by CI and scripted installs):
+  // no prompts, empty name, no shared repo, project-local install.
+  const useDefaults = process.argv.includes("--defaults");
+  const rl = useDefaults
+    ? null
+    : readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
+
+  // Resolves straight to the default (no prompt) when --defaults is set.
+  const prompt = (question, defaultVal) =>
+    useDefaults ? Promise.resolve(defaultVal || "") : ask(rl, question, defaultVal);
 
   console.log("");
   console.log("╔══════════════════════════════════════════════════╗");
@@ -63,15 +73,14 @@ async function main() {
   console.log("");
 
   // Step 1: Personalization
-  const userName = await ask(rl, "What's your name?", "");
+  const userName = await prompt("What's your name?", "");
   console.log(`\nHi ${userName}! Let's get CKW set up.\n`);
 
   // Step 2: Shared knowledge repo
   console.log("CKW stores cross-project learnings in a shared team repo.");
   console.log("This is where solutions, skills, templates, and playbooks live");
   console.log("so your whole team benefits from compounded knowledge.\n");
-  const knowledgeRepoPath = await ask(
-    rl,
+  const knowledgeRepoPath = await prompt(
     "Path to your team's shared knowledge repo (or press Enter to skip for now)",
     ""
   );
@@ -80,7 +89,7 @@ async function main() {
   console.log("\nWhere should CKW install its commands and agents?\n");
   console.log("  1) This project only (current directory)");
   console.log("  2) Globally (available in all projects)");
-  const installChoice = await ask(rl, "\nChoose 1 or 2", "1");
+  const installChoice = await prompt("\nChoose 1 or 2", "1");
   const isGlobal = installChoice === "2";
 
   const installDir = isGlobal
@@ -147,10 +156,11 @@ async function main() {
     if (!settings.hooks) settings.hooks = {};
     if (!settings.hooks.SessionStart) settings.hooks.SessionStart = [];
 
-    const isWindows = process.platform === "win32";
-    const hookCmd = isWindows
-      ? `node ~/.claude/hooks/ckw-session-init.js`
-      : `bash ~/.claude/hooks/ckw-session-init.sh`;
+    // Point the hook at the file we actually copied (derived from installDir),
+    // not a hardcoded ~/.claude path — a project-local install lives under ./.claude.
+    // One cross-platform Node hook; the old bash/.sh variant is retired.
+    const hookScript = path.join(installDir, "hooks", "ckw-session-init.js");
+    const hookCmd = `node "${hookScript}"`;
     const alreadyRegistered = settings.hooks.SessionStart.some(
       (entry) =>
         entry.hooks &&
@@ -174,15 +184,32 @@ async function main() {
 
   // Create config.json (with projects registry for path aliases)
   const configPath = path.join(CKW_HOME, "config.json");
-  let config;
+  let config = null;
   if (fs.existsSync(configPath)) {
-    // Preserve existing config (especially projects registry)
-    config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+    // Preserve existing config (especially the projects registry).
+    try {
+      config = JSON.parse(fs.readFileSync(configPath, "utf8"));
+    } catch (e) {
+      // Malformed config — back it up rather than crashing, then start fresh.
+      try {
+        fs.copyFileSync(configPath, configPath + ".bak");
+        console.log(`  ⚠ config.json couldn't be parsed — backed up to config.json.bak`);
+      } catch {
+        console.log(`  ⚠ config.json couldn't be parsed — starting a fresh config`);
+      }
+      config = null;
+    }
+  }
+
+  if (config) {
     config.version = VERSION;
-    config.user = { name: userName };
+    // Merge, don't clobber — preserve any other user fields already set.
+    config.user = { ...(config.user || {}), name: userName };
+    if (!Array.isArray(config.knowledge_repos)) config.knowledge_repos = [];
     if (knowledgeRepoPath && !config.knowledge_repos.includes(knowledgeRepoPath)) {
       config.knowledge_repos.push(knowledgeRepoPath);
     }
+    if (!config.projects || typeof config.projects !== "object") config.projects = {};
     config.install_type = isGlobal ? "global" : "local";
     config.install_path = installDir;
   } else {
@@ -245,7 +272,7 @@ async function main() {
     console.log("  You can add one later in ~/.ckw/config.json\n");
   }
 
-  rl.close();
+  if (rl) rl.close();
 }
 
 main().catch((err) => {
