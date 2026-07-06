@@ -59,9 +59,11 @@ Wait for user confirmation before proceeding with partial review.
 - All draft files for the phase (from `drafts/`)
 - All task summaries (`.planning/phases/{NN}-{phase-name}/{N}-SUMMARY.md`)
 - PHASE-PLAN.md — What each task was supposed to produce
+- The per-task plans `{N}-PLAN.md` — each task's Output spec and length target (Checks 2 and 6); small
+- Reference index summaries — every file in `reference/.index/` (summaries only, not full source docs); budgeted (usually well under 10K total). The reviewer's Check 4 grounds claims against these.
 
 **Do NOT load:**
-- Reference materials — reviewer works from requirements and context, not source docs
+- Full reference source documents — pass only the `reference/.index/` summaries above, never the originals
 - Drafts from other phases
 - Prior REVIEW_REPORT.md (each review is fresh)
 
