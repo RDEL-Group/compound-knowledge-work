@@ -1,6 +1,6 @@
 {
   "name": "compound-knowledge-work",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A Claude Code plugin for knowledge work — spec-driven phased execution with compounding institutional knowledge",
   "bin": {
     "compound-knowledge-work": "./bin/install.js"

@@ -1,7 +1,7 @@
 # Compound Knowledge Work (CKW)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.0.1-green.svg)](./CHANGELOG.md)
 
 A Claude Code plugin for knowledge work. CKW breaks complex projects — RFPs, proposals, SOPs, training materials, strategy docs, client reports — into executable phases, drafts them with consistent quality, and remembers what worked so your next project is faster and better than the last.
 

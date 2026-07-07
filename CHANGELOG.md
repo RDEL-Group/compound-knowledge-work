@@ -4,6 +4,38 @@ All notable changes to Compound Knowledge Work (CKW) will be documented in this 
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.0.1] - 2026-07-06
+
+Outside-adopter hardening sprint — fixes the install, import, review, and Proof
+paths a new user hits first, adds CI, and sweeps doc integrity. No breaking changes.
+
+### Added
+- Plugin-native `hooks/hooks.json` so marketplace installs deliver the SessionStart hook with no extra step; `displayName` in plugin.json.
+- `--defaults` non-interactive flag for `bin/install.js` (CI and scripted installs).
+- CI smoke workflow (`.github/workflows/smoke.yml`): version consistency, manifest/hook/command-coverage checks, cross-platform installer test, and document-conversion tests.
+- `scripts/bump-version.js` (single version source), `scripts/ci-checks.js`, `scripts/ci-install-test.js`, and `tests/fixtures/`.
+- Reviewer grounding vocabulary (Grounded / Assertable / Unsupported-critical) plus Quote + Severity columns and count frontmatter in review reports.
+- `--confirm-publish` flag and owner-secret persistence (`.proof-secrets.md`) for Proof publishing.
+
+### Changed
+- Single cross-platform `ckw-session-init.js` hook, with the status vocabulary the commands actually write.
+- Import pipeline is Read-tool-first: PDFs use Claude's native Read tool; `.docx/.pptx/.html/.rtf` go through a hardened `convert_document.sh`.
+- Skill scripts use skill-relative paths (work under marketplace installs); Google Drive uploads always set `supportsAllDrives`; proof-publisher uses one safe temp-file JSON payload pattern.
+- Reviewer now loads `reference/.index/` summaries so its evidence check is possible; review-report format aligned with what publish-proof parses.
+- README Option B is a genuine one-step marketplace install; `--headless` documented as a first-class feature; OS-support statement added; install references use the `github:` form.
+- Regenerated USER-GUIDE against the full 19-command surface; help.md command count is enumerated at runtime.
+
+### Fixed
+- Default project-local install registered a SessionStart hook at a path it never populated — the hook command now derives from the chosen install directory.
+- `convert_document.sh`: PDFs/PPTX no longer routed through `textutil` (which returned silent garbage / empty output); output is verified non-empty; stderr is surfaced; extensions match case-insensitively; the python-docx fallback is no longer vulnerable to code injection via an apostrophe in the filename.
+- Installer config handling: `try/catch` around the config parse, guarded `knowledge_repos`, and `user` is merged instead of clobbered.
+- Reviewer Check 4 contradiction (verify-from-references vs. don't-load-references) and its P1/P2 severity conflict.
+- Ghost `/ckw:discuss-phase` references; RFPbot vestiges in the executor; GSD and CoworkPowers credit links; CHANGELOG command math; `drive.md` duplicate step numbers and missing file IDs; and assorted verified inconsistencies.
+
+### Removed
+- Two dead hooks (`ckw-context-monitor.js`, `ckw-statusline.js`) that nothing registered and that used an invalid schema.
+- The internal "Satellite" codename from all shipped examples (replaced with a neutral "Northwind" example).
+
 ## [1.0.0] - 2026-04-01
 
 ### Added
