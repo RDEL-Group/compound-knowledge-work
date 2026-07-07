@@ -20,19 +20,34 @@ CKW is designed for live editing via symlinks. No build step, no bundler.
    cd compound-knowledge-work
    ```
 
-2. Run the installer in global mode:
+2. Create your CKW config (non-interactive):
    ```bash
-   node bin/install.js
+   node bin/install.js --defaults
    ```
-   Choose **Global** when prompted. This copies files to `~/.claude/`.
+   This creates `~/.ckw/config.json` and `~/.ckw/SYSTEM.md`.
 
-3. For live development, symlink instead of copying:
+3. For live development, symlink the source into `~/.claude/` so edits are instant.
+   Remove any previously copied targets first — otherwise `ln -s` nests a link
+   *inside* the copied directory:
    ```bash
-   ln -sf "$(pwd)/commands/ckw" ~/.claude/commands/ckw
-   ln -sf "$(pwd)/agents"/*.md ~/.claude/agents/
-   # Repeat for skills/ and hooks/ as needed
+   mkdir -p ~/.claude/commands ~/.claude/agents ~/.claude/skills ~/.claude/hooks
+
+   # commands are namespaced under ckw/ — safe to replace wholesale
+   rm -rf ~/.claude/commands/ckw
+   ln -sfn "$(pwd)/commands/ckw" ~/.claude/commands/ckw
+
+   # agents: CKW files are ckw-*.md
+   rm -f ~/.claude/agents/ckw-*.md
+   ln -sf "$(pwd)/agents/ckw-"*.md ~/.claude/agents/
+
+   # skills: one directory each (globbed, so new skills are picked up)
+   for d in "$(pwd)"/skills/*/; do n=$(basename "$d"); rm -rf ~/.claude/skills/"$n"; ln -sfn "$d" ~/.claude/skills/"$n"; done
+
+   # hooks
+   rm -f ~/.claude/hooks/ckw-session-init.js ~/.claude/hooks/hooks.json
+   ln -sf "$(pwd)/hooks/ckw-session-init.js" "$(pwd)/hooks/hooks.json" ~/.claude/hooks/
    ```
-   Now edits to source files are immediately available via `/ckw:` commands.
+   Now edits to source files are immediately live via `/ckw:` commands.
 
 4. Test by opening Claude Code in any project folder and running `/ckw:help`.
 
@@ -69,8 +84,22 @@ Keep PRs focused. One feature or fix per PR is easier to review than a bundle.
 
 - Markdown for commands, agents, and skills — follow existing patterns.
 - JavaScript for hooks and the installer — vanilla Node.js, no transpilation.
-- Python scripts in skills use stdlib only (no pip dependencies).
+- Python scripts in skills use the standard library. The one exception is import-summarizer's optional python-docx fallback for `.docx`, used only if both pandoc and textutil are unavailable — never required.
 - Keep things readable. Comments where the logic isn't obvious, not everywhere.
+
+## Releasing
+
+`package.json` is the canonical version. Bump every version site at once with the version tool (stdlib only, no deps):
+
+```bash
+node scripts/bump-version.js 1.0.1     # sets package.json, plugin.json,
+                                       # marketplace.json, install.js, and the README badge
+node scripts/bump-version.js --check   # CI gate — fails if any site disagrees
+```
+
+Then update `CHANGELOG.md`, commit, and (maintainers) tag + push.
+
+CI (`.github/workflows/smoke.yml`) runs on every push and PR: version consistency, manifest + hook-wiring + command-coverage checks, the installer smoke test on Linux/macOS/Windows, and the document-conversion fixtures on macOS. Run the static checks locally with `node scripts/ci-checks.js` and `node scripts/ci-install-test.js`.
 
 ## License
 

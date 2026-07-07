@@ -1,0 +1,70 @@
+name: smoke
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  static:
+    name: Static checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Version consistency across all manifests
+        run: node scripts/bump-version.js --check
+      - name: Manifests, hook wiring, and command coverage
+        run: node scripts/ci-checks.js
+
+  install:
+    name: Installer (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: install --defaults registers a hook that exists on disk
+        run: node scripts/ci-install-test.js
+
+  convert:
+    name: Document conversion (macOS)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pandoc
+        run: brew install pandoc
+      - name: convert_document.sh produces real text for every fixture
+        run: |
+          set -euo pipefail
+          SH=skills/import-summarizer/scripts/convert_document.sh
+          SENT=CKW_FIXTURE_SENTINEL
+          fail=0
+          for f in "fixture.docx" "O'Brien Brief.docx" "Report.DOCX" "fixture.pptx" "fixture.html" "fixture.rtf" "fixture.txt"; do
+            if bash "$SH" "tests/fixtures/$f" 2>/dev/null | grep -q "$SENT"; then
+              echo "  OK: $f"
+            else
+              echo "  FAIL: $f (empty or missing sentinel)"; fail=1
+            fi
+          done
+          # PDF must refuse in-script and point at Claude's Read tool
+          if bash "$SH" tests/fixtures/fixture.pdf >/dev/null 2>err.txt; then
+            echo "  FAIL: pdf did not refuse"; fail=1
+          elif grep -q "Read tool" err.txt; then
+            echo "  OK: pdf refuses with Read-tool pointer"
+          else
+            echo "  FAIL: pdf errored without the expected message"; fail=1
+          fi
+          rm -f err.txt
+          exit $fail
+
+# Note: `claude plugin validate` covers the same manifest/frontmatter surface as
+# the `static` job's ci-checks.js and can be run locally where the CLI is present.
