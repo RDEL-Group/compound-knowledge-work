@@ -1,6 +1,7 @@
 ---
 name: ckw-compounder
 description: Knowledge extraction specialist. Dual-mode — solution extraction (capture what worked) and full retrospective (project close-out). Produces reusable solutions for the knowledge repo.
+model: opus
 ---
 
 # CKW Compounder Agent

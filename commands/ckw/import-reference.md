@@ -15,12 +15,15 @@ Import reference documents into a CKW project. Each document is converted to rea
 /ckw:import-reference --batch reference/
 /ckw:import-reference --from-drive "search term"
 /ckw:import-reference --from-drive DOC_ID
+/ckw:import-reference --from-jira "search term"
+/ckw:import-reference --from-jira PROJ-42
 /ckw:import-reference <path> --headless
 ```
 
 - `<path>`: Path to a single file or glob pattern
 - `--batch <directory>`: Process all supported files in the directory
 - `--from-drive <term or ID>`: Fetch file(s) from Google Drive instead of local filesystem
+- `--from-jira <term, key, or URL>`: Fetch content from Jira/Confluence via the TWG CLI instead of local filesystem
 
 ## What This Command Does
 
@@ -74,6 +77,41 @@ Then authenticate:
 Or import local files instead:
   /ckw:import-reference <path>
 ```
+
+### Step 1c: Fetch from Jira/Confluence (if --from-jira)
+
+If `--from-jira` is specified, fetch content from Atlassian via the **TWG CLI's own skills** (`twg`, `twg-jira`, `twg-confluence`, `twg-agentic-search`). Atlassian ships and maintains these skills with the CLI — delegate fetching to them rather than hardcoding `twg` command syntax here, so CKW stays insulated from CLI changes.
+
+1. **Check the TWG CLI is available:**
+
+```bash
+which twg || ls "$HOME/.local/bin/twg"
+```
+
+**If not found:**
+```
+The Atlassian TWG CLI is required for --from-jira.
+
+Install it from: https://developer.atlassian.com/cloud/twg-cli/
+Then run its setup/auth flow.
+
+Or import local files instead:
+  /ckw:import-reference <path>
+```
+Stop here.
+
+2. **Resolve the argument:**
+   - **Jira key** (e.g., `PROJ-42`) or **Atlassian URL** → fetch directly via the **twg-jira** skill (workitem) or **twg-confluence** skill (page), per the URL/anchor type.
+   - **Search term** → discover candidates via the **twg-agentic-search** skill (Rovo search across Jira and Confluence), present a numbered list of results, and ask the user which to import (can select multiple).
+
+3. **For each selected item, fetch full content and convert to markdown:**
+   - **Jira workitem:** summary, description, key fields (status, assignee, priority, labels), and comments. Title the file `# [KEY] Summary`.
+   - **Confluence page:** page body converted to markdown, with title as `#` heading.
+   - Save to `reference/{name}.md` where name is the Jira key lowercased (e.g., `PROJ-42` → `reference/proj-42.md`) or the page title lowercased with spaces as hyphens.
+
+4. **Continue to Step 4** (Process Each File) with these saved local files. The import-summarizer skill generates indexed summaries as normal.
+
+> **Note:** Imported summaries are snapshots — a Jira ticket that changes after import won't update automatically. Re-run `/ckw:import-reference --from-jira KEY` to refresh.
 
 ### Step 2: Resolve Files
 
@@ -200,6 +238,7 @@ Next:
 - **Batch confirmation (Step 2):** Skip. Process all supported files found at the path.
 - **Existing summaries (Step 4a):** Skip existing summaries (do not re-import). To force re-import in headless mode, delete the existing summary first.
 - **`--from-drive` search results:** Not supported in headless mode. Use a specific file ID instead of a search term. If a search term is provided with `--headless`, return error: "Headless mode requires a specific file ID for --from-drive, not a search term."
+- **`--from-jira` search results:** Not supported in headless mode. Use a specific Jira key or URL instead of a search term. If a search term is provided with `--headless`, return error: "Headless mode requires a specific Jira key or URL for --from-jira, not a search term."
 - **All file writes and git commits:** Proceed without confirmation.
 - **Context budget report (Step 5):** Still generated.
 
@@ -210,5 +249,7 @@ Next:
 - **File not found** → "File not found at [path]. Check the path and try again."
 - **Conversion failure** → Report the specific error, suggest installing pandoc, continue with next file
 - **Very large file (>50K tokens)** → "This file is very large (~[N] tokens). Import anyway, or identify specific sections to extract?"
+- **TWG CLI not installed (--from-jira)** → Install instructions (see Step 1c), suggest local import instead
+- **TWG auth/permission error (--from-jira)** → Report the CLI's remediation message and stop; do not run TWG setup/login commands unless the user explicitly asks
 - **reference/.index/ already has summaries** → Offer to re-import or skip (per file or batch)
 - **Config.json missing** → "CKW config not found at ~/.ckw/config.json. Run the installer or create it manually."

@@ -1,6 +1,7 @@
 ---
 name: ckw-executor
 description: Content drafting specialist. Produces deliverable content from structured task plans in a fresh context — one task per invocation.
+model: sonnet
 ---
 
 # CKW Executor Agent

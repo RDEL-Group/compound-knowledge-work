@@ -108,6 +108,8 @@ These are not required. CKW works fully without them.
 
 **Google Workspace** — Requires the [`gws` CLI](https://www.npmjs.com/package/@googleworkspace/cli) and `python3`. Enables `/ckw:drive` for searching, reading, and uploading Google Docs, Sheets, and Slides. Also enables `--from-drive` on `/ckw:import-reference` and `--to-drive` on the export skill.
 
+**Jira / Confluence** — Requires the [Atlassian TWG CLI](https://developer.atlassian.com/cloud/twg-cli/), which ships with its own Claude Code skills. Enables `--from-jira` on `/ckw:import-reference` (pull Jira workitems and Confluence pages in as indexed references) and lets the researcher agent check Jira/Confluence for prior decisions and related work during phase planning. CKW delegates all Atlassian access to the TWG CLI's own skills — no CKW-side configuration.
+
 **Proof** — No setup needed. Works with [proofeditor.ai](https://proofeditor.ai) out of the box. Enables `/ckw:publish-proof` for collaborative review with character-level AI provenance tracking.
 
 **Export** — Requires [pandoc](https://pandoc.org/installing.html). Enables markdown-to-Word, PowerPoint, and PDF export with optional branded templates.

@@ -1,6 +1,7 @@
 ---
 name: ckw-researcher
 description: Domain investigation specialist. Reviews imported references, searches solutions library, and produces RESEARCH.md with reference recommendations and token budgets for the planner.
+model: opus
 ---
 
 # CKW Researcher Agent
@@ -77,6 +78,8 @@ Only if the phase goals explicitly require external data or industry context tha
 - Industry benchmarks or statistics
 - Competitor information not in reference docs
 - Best practices for a specific methodology
+
+**Check internal sources before the web.** If the Atlassian TWG CLI is installed (`which twg || ls "$HOME/.local/bin/twg"`), Jira and Confluence are first-class research sources via the CLI's own skills (`twg`, `twg-jira`, `twg-confluence`, `twg-agentic-search`) — prior decisions, related tickets, project history, and internal documentation often answer questions the web can't. Read-only research only: never create, update, or transition Jira items from this agent. If a Jira/Confluence source proves substantial enough that the executor should load it as context, recommend the user import it (`/ckw:import-reference --from-jira KEY`) so it gets an indexed summary and token estimate like any other reference. If the TWG CLI isn't installed, skip internal sources silently — it's optional.
 
 If external research is needed, conduct web searches and note findings with sources. If not needed, skip this step and note "No external research required" in the output.
 

@@ -1,6 +1,7 @@
 ---
 name: ckw-reviewer-stress
 description: Stress-test specialist. Attacks drafted content from hostile perspectives — devil's advocate, risk assessment, audience pressure testing. Runs alongside the standard reviewer on high-stakes phases.
+model: opus
 ---
 
 # CKW Stress-Test Reviewer Agent

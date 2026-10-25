@@ -4,6 +4,16 @@ All notable changes to Compound Knowledge Work (CKW) will be documented in this 
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+- `--from-jira` on `/ckw:import-reference`: pull Jira workitems and Confluence pages in as indexed references via the Atlassian TWG CLI's own skills (optional integration — nothing changes if the CLI isn't installed). Headless mode requires a specific key or URL.
+- Researcher agent checks internal sources before the web when the TWG CLI is installed (Jira/Confluence prior decisions and related work, read-only), and recommends `--from-jira` imports for substantial sources.
+- Optional-integrations section in `/ckw:help`; README and USER-GUIDE coverage for the Jira/Confluence integration.
+
+### Changed
+- Agents declare `model:` in frontmatter: executor runs on `sonnet`; scoper, planner, researcher, reviewer, stress reviewer, and compounder on `opus`.
+
 ## [1.0.1] - 2026-07-06
 
 Outside-adopter hardening sprint — fixes the install, import, review, and Proof

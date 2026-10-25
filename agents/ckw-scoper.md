@@ -1,6 +1,7 @@
 ---
 name: ckw-scoper
 description: Project scoping specialist. Conducts structured interviews, searches prior solutions, and generates the complete file set needed to start a CKW project.
+model: opus
 ---
 
 # CKW Scoper Agent

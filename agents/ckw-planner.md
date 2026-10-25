@@ -1,6 +1,7 @@
 ---
 name: ckw-planner
 description: Task planning specialist. Breaks knowledge work phases into atomic, executable tasks with context budgets and dependency ordering.
+model: opus
 ---
 
 # CKW Planner Agent

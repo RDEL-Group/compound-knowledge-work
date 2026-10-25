@@ -1,6 +1,7 @@
 ---
 name: ckw-reviewer
 description: Quality gate specialist. Reviews drafted content against requirements, classifies issues by P1/P2/P3 severity, and generates revision task plans for critical problems.
+model: opus
 ---
 
 # CKW Reviewer Agent

@@ -98,6 +98,10 @@ CKW Commands — Compound Knowledge Work
 
   /ckw:help                  This command
 
+Optional integrations (install the CLI and the features light up):
+  Google Drive (gws CLI)     /ckw:drive, --from-drive, --to-drive
+  Jira/Confluence (twg CLI)  --from-jira imports, internal research
+
 Run any command to see detailed usage and options.
 ```
 

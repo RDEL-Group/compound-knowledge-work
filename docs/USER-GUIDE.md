@@ -2,7 +2,7 @@
 
 CKW (Compound Knowledge Work) helps you plan, draft, review, and deliver knowledge work — RFPs, proposals, strategy docs, training materials, SOPs, client reports — inside Claude Code. It breaks big projects into small tasks, tracks where you are, and remembers what worked so each project goes faster and lands better than the last.
 
-**Before you start:** You need Claude Code. Two things are optional: **pandoc** (only if you want to export drafts to Word, PowerPoint, or PDF) and the **`gws` CLI** (only if you want the Google Drive features).
+**Before you start:** You need Claude Code. Three things are optional: **pandoc** (only if you want to export drafts to Word, PowerPoint, or PDF), the **`gws` CLI** (only if you want the Google Drive features), and the **Atlassian TWG CLI** (only if you want to pull reference material from Jira or Confluence).
 
 ## Starting a Project
 
@@ -12,7 +12,7 @@ Say you've just landed the Northwind Q3 proposal. Three ways to begin:
 - **From scratch:** `/ckw:new-project` — CKW interviews you, then builds the structure.
 - **Existing folder:** `/ckw:adopt-project` — Already have files scattered around? CKW wraps them into its framework.
 
-Pull in supporting material next: `/ckw:import-reference reference/*.pdf`. If a document lives on Google Drive, use `/ckw:drive import "Northwind brief"` to search, grab, and index it in one step.
+Pull in supporting material next: `/ckw:import-reference reference/*.pdf`. If a document lives on Google Drive, use `/ckw:drive import "Northwind brief"` to search, grab, and index it in one step. If your project documents live in Jira or Confluence and you have the Atlassian TWG CLI installed, `/ckw:import-reference --from-jira "Northwind"` (or a specific key like `--from-jira PROJ-42`) pulls them in the same way — and during planning, the researcher will also check Jira and Confluence for prior decisions and related work automatically.
 
 ## Planning and Executing
 
