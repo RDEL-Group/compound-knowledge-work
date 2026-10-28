@@ -61,6 +61,7 @@ Wait for user confirmation before proceeding with partial review.
 - PHASE-PLAN.md — What each task was supposed to produce
 - The per-task plans `{N}-PLAN.md` — each task's Output spec and length target (Checks 2 and 6); small
 - Reference index summaries — every file in `reference/.index/` (summaries only, not full source docs); budgeted (usually well under 10K total). The reviewer's Check 4 grounds claims against these.
+- Voice and style files: the VOICE.md, STYLE-*, and AUDIENCE-* files listed in the task plans' Context to Load, including any project override (for Check 7; rules in `docs/context-contract.md`). Resolve `[knowledge-repo]` in those paths from this user's own `~/.ckw/config.json` → `knowledge_repos[0]`. If the config has no `knowledge_repos` entry, say so and name that setting instead of reporting files as not found. If a listed voice file can't be found, run Check 7 with what exists and say so in the report's Summary ("Check 7 ran without [file]"); never skip it silently. If no task plan lists any, skip this: the review runs exactly as before
 
 **Do NOT load:**
 - Full reference source documents — pass only the `reference/.index/` summaries above, never the originals
@@ -69,7 +70,7 @@ Wait for user confirmation before proceeding with partial review.
 
 ### Step 3: Spawn Reviewer
 
-Spawn the **ckw-reviewer** agent with all gathered context. The agent runs 6 review checks:
+Spawn the **ckw-reviewer** agent with all gathered context. The agent runs 6 review checks (plus a 7th when voice files are loaded):
 
 1. Requirements Coverage
 2. Completeness
@@ -77,6 +78,9 @@ Spawn the **ckw-reviewer** agent with all gathered context. The agent runs 6 rev
 4. Evidence & Specificity
 5. Tone & Voice
 6. Readability
+7. Voice & Style Drift (only when voice files are loaded)
+
+Check 7 cites the specific VOICE/STYLE rule behind every finding and runs the STYLE file's mechanical checks. Mechanical failures and register breaks on client-facing drafts are P2 (P1 only when CONTEXT.md records the phase as high-stakes).
 
 See `agents/ckw-reviewer.md` for the full review process.
 
@@ -207,6 +211,7 @@ Full report: .planning/phases/{NN}-{phase-name}/REVIEW_REPORT.md
 
 - **Partial drafts (Step 1):** Review whatever is available without asking. Do not prompt "review now or wait?"
 - **Stress-test offer (Step 3a):** Auto-run stress-test if CONTEXT.md contains stakes language (board, client, regulatory, public-facing, financial impact). If no CONTEXT.md or no stakes indicators, skip stress-test.
+- **Voice & Style Drift (Check 7):** Runs automatically when voice files are loaded. No new prompts.
 - **All file writes and git commits:** Proceed without confirmation.
 - **Report (Step 7):** Still generated with full details.
 

@@ -45,6 +45,9 @@ CKW Commands — Compound Knowledge Work
   /ckw:import-reference      Add reference documents (PDF, Word, etc.)
                              Example: /ckw:import-reference reference/*.pdf
 
+  /ckw:calibrate-voice       Teach CKW your team's writing voice from real samples
+                             Example: /ckw:calibrate-voice
+
 ━━ Plan ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
   /ckw:brainstorm            Explore ideas before planning a phase
                              Example: /ckw:brainstorm 2

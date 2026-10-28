@@ -7,6 +7,7 @@ This folder stores cross-project learnings for the team. When you run `/ckw:comp
 - **solutions/** — Reusable patterns, frameworks, and approaches captured via `/ckw:compound`. Each solution is a markdown file with structured metadata. The `solutions-index.md` file is the master index.
 - **templates/** — Document templates for common deliverables (proposals, reports, SOPs, etc.). Drop templates here and reference them via the export skill's `--template` flag.
 - **playbooks/** — Step-by-step workflow guides for recurring processes. Created manually or promoted from project retrospectives.
+- **voice/** — Your team's writing standards, so every deliverable reads in one voice. One org-level `VOICE.md` (how our sentences sound), one `STYLE-*.md` per document type (what the document must prove and how it is built: reporting-runbook, strategy-doc, rfp), and one `AUDIENCE-*.md` per reader type (current-client, prospect). Run `/ckw:calibrate-voice` to fill it in from your own past documents. A single project can override any of it with its own `voice/` folder. Start with `voice/README.md`.
 
 ## Adding Solutions
 

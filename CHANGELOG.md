@@ -4,15 +4,28 @@ All notable changes to Compound Knowledge Work (CKW) will be documented in this 
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
+## [1.1.0] - 2026-10-28
+
+Voice, style, and audience layer: deliverables read in the org's voice and meet
+the right document-type standard, with lessons routed to the right file. Also
+adds optional Jira/Confluence import via the Atlassian TWG CLI and per-agent
+model tiering. No breaking changes; without a `voice/` folder, every command
+behaves exactly as in 1.0.1.
 
 ### Added
 - `--from-jira` on `/ckw:import-reference`: pull Jira workitems and Confluence pages in as indexed references via the Atlassian TWG CLI's own skills (optional integration — nothing changes if the CLI isn't installed). Headless mode requires a specific key or URL.
 - Researcher agent checks internal sources before the web when the TWG CLI is installed (Jira/Confluence prior decisions and related work, read-only), and recommends `--from-jira` imports for substantial sources.
 - Optional-integrations section in `/ckw:help`; README and USER-GUIDE coverage for the Jira/Confluence integration.
+- Voice, style, and audience layer: starter templates in `knowledge-repo-template/voice/` (one `VOICE.md`, three `STYLE-*.md` for reporting-runbook, strategy-doc, and rfp, two `AUDIENCE-*.md` for current-client and prospect, plus a README), adapted from Every's compound-writing plugin (Katie Parrott, MIT).
+- `/ckw:calibrate-voice`: builds or refreshes `VOICE.md` from 3–5 real past deliverables; conversational, validated by showing a paragraph in the derived voice, and nothing is saved until you approve the full file.
+- `docs/context-contract.md`: one page that sets which writing rule wins (authority order, `VOICE.md` over `~/.ckw/SYSTEM.md` on client-facing work) plus the classification test that routes a rule to VOICE, STYLE, or AUDIENCE.
+- Reviewer Check 7 (Voice & Style Drift): runs the STYLE file's mechanical checks and cites the exact rule behind every finding; P2 on client-facing drafts, P1 on high-stakes phases.
+- Compounder lesson routing: writing lessons go to `VOICE.md`, a STYLE file, an AUDIENCE file, solutions, or stay with the piece; inferred lessons are confirmed before they become durable.
+- README, USER-GUIDE, and `/ckw:help` coverage for the voice layer; Compound Writing credited in the README.
 
 ### Changed
 - Agents declare `model:` in frontmatter: executor runs on `sonnet`; scoper, planner, researcher, reviewer, stress reviewer, and compounder on `opus`.
+- Planner lists the right voice, style, and audience files in each task's Context to Load, and the executor drafts under them silently and runs the STYLE file's mechanical checks before handing back; with no `voice/` folder, planning, drafting, review, and compounding behave exactly as before.
 
 ## [1.0.1] - 2026-07-06
 

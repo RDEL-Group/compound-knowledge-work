@@ -35,6 +35,7 @@ Spawn the **ckw-planner** agent with a fresh context.
 - Shared knowledge repo `solutions/` — for patterns matching this deliverable type
 - `reference/.index/` — to understand available reference materials and their sizes
 - Phase RESEARCH.md — Reference recommendations from the researcher agent (if Step 1c was run)
+- Shared knowledge repo `voice/` folder, plus the project's own `voice/` folder if it has one: only to see which VOICE, STYLE-*, and AUDIENCE-* files exist and how large they are (if neither folder exists, skip this)
 
 ### Step 1b: Check for P0-Blocking Open Questions
 
@@ -144,6 +145,10 @@ Break the phase into atomic tasks. Each task must be:
 - This task plan (T3)
 - reference/.index/[specific-summary].md (T3 — ~X tokens)
 - [specific section of reference doc if needed] (T4 — ~X tokens)
+- [knowledge-repo]/voice/VOICE.md (T3 — ~X tokens) <!-- voice layer only. Write [knowledge-repo] literally, never expanded: the executor and reviewer resolve it at run time from their own ~/.ckw/config.json knowledge_repos[0], because the same shared folder has a different full path on every computer. Delete the voice lines if neither the knowledge repo nor the project has a voice/ folder -->
+- [knowledge-repo]/voice/STYLE-[doc-type].md (T3 — ~X tokens)
+- [knowledge-repo]/voice/AUDIENCE-[segment].md (T3 — ~X tokens)
+- voice/[file name] (T3 — ~X tokens) <!-- project override: one line per matching file in the project's own voice/ folder. If only the project has a voice/ folder, list its files this way and drop the knowledge-repo lines -->
 
 ## Estimated Context Budget
 - T1 + T2: ~15% (~30K tokens)
@@ -158,6 +163,7 @@ what tone to use, what sources to reference, what claims to support.]
 [How to know this task is done well]
 - [ ] Addresses requirements: [list specific requirement IDs from REQUIREMENTS.md]
 - [ ] Follows tone from CONTEXT.md
+- [ ] Passes the STYLE file's mechanical checks and readiness standard <!-- only when the task loads a STYLE file -->
 - [ ] Supports claims with [specific evidence sources]
 - [ ] Stays within length target
 - [ ] No placeholder text except [ACTION REQUIRED] for items needing human input
@@ -166,6 +172,8 @@ what tone to use, what sources to reference, what claims to support.]
 - **Requires:** [list task numbers that must complete first, or "None"]
 - **Feeds into:** [list task numbers that depend on this, or "None"]
 ```
+
+**Voice and style files:** Only when the knowledge repo or the project has a `voice/` folder. For each task that drafts or edits deliverable prose, pick the one STYLE file for its document type and the one AUDIENCE file for its reader, and list them with VOICE.md as in the template (add the project's own override file beside the org file where the project has one). Write org files with the literal `[knowledge-repo]/voice/` prefix (never your own machine's expanded path, which breaks when a teammate runs the plan), and project files as project-relative `voice/` paths. The executor and reviewer resolve the prefix from their own config when they run. Keep the three within about 4K tokens together (`docs/context-contract.md`, "Loading budget"). Tasks that only extract or synthesize for other tasks skip them. If no file fits the document type or reader, list what exists and note the gap in the plan; never invent a file. With no `voice/` folder in either place, drop the lines and plan exactly as before.
 
 ### Step 4: Create Phase Summary
 
@@ -251,6 +259,7 @@ Next:
 - **Researcher offer (Step 1c):** Skip researcher. If RESEARCH.md already exists from a prior run, use it. Otherwise, plan without research.
 - **Preference capture fallback (Step 2.4):** If no CONTEXT.md exists, skip preference capture entirely. The planner uses defaults from PROJECT.md and REQUIREMENTS.md. Do not create a CONTEXT.md.
 - **Solution confirmation (Step 2.1):** Auto-incorporate all matching solutions without asking.
+- **Voice and style files (Step 3):** List the applicable files without asking. No new prompts.
 - **All file writes and git commits:** Proceed without confirmation.
 - **Progress report:** Still generated (useful for orchestration logs).
 

@@ -57,7 +57,7 @@ CKW is a zero-dependency Claude Code plugin. Everything is markdown and vanilla 
 
 | Component | Location | Format |
 |-----------|----------|--------|
-| 19 slash commands | `commands/ckw/` | Markdown (`.md`) |
+| 20 slash commands | `commands/ckw/` | Markdown (`.md`) |
 | 7 agents | `agents/` | Markdown agent definitions |
 | 5 skills | `skills/*/SKILL.md` | SKILL.md + optional scripts |
 | 1 hook | `hooks/` | JavaScript (`.js`) + `hooks.json` manifest |

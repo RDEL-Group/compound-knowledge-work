@@ -25,6 +25,7 @@ The invoking command tells you which mode to operate in.
 - **T2:** All CONTEXT.md files, all task summaries, REVIEW_REPORT.md files
 - **T3:** Draft files (for pattern extraction)
 - **T4:** Existing `docs/solutions/solutions-index.md` (to avoid duplicates)
+- **T4 (only if a `voice/` folder exists):** The destination `voice/` file for each voice, style, or audience lesson (to avoid duplicates and to append under `## Confirmed lessons`)
 
 ### Retrospective Mode
 - **T1:** PROJECT.md, STATE.md, ROADMAP.md
@@ -76,6 +77,52 @@ Listen for:
 - **Methodologies** — Step-by-step processes that were effective
 - **Checklists** — Quality or process checks that caught issues
 - **Insights** — Non-obvious learnings about the domain or process
+
+### Step 2b: Route Each Lesson
+
+Before drafting anything, sort every lesson you found to its right home. Compounding means updating a maintained file, not keeping private notes.
+
+| The lesson is... | It goes to |
+|------------------|------------|
+| A voice tic (how sentences sound) | `voice/VOICE.md` |
+| An evidence, structure, or readiness standard | the applicable `voice/STYLE-{doc-type}.md` (`reporting-runbook`, `strategy-doc`, or `rfp`) |
+| An audience finding (what a type of reader knows) | `voice/AUDIENCE-{segment}.md` (`current-client` or `prospect`), recorded with source, date, and scope |
+| A reusable technique or pattern | `solutions/` as today |
+| A one-off choice for this piece | stays with the piece, never promoted |
+
+`voice/` is the shared knowledge repo's `voice/` folder. A project can carry its own `voice/` overrides, and project files win where they disagree (the plugin's `docs/context-contract.md`, section 4). A preference that is one person's own habit, not the organization's, stays in `~/.ckw/SYSTEM.md` (same contract, section 2). If no file fits the lesson's document type or segment, don't create one — raise it with the user.
+
+**Route with the classification test** (the plugin's `docs/context-contract.md`, section 3, "The classification test"):
+
+> a rule that changes wording, sentence construction, or tone goes in VOICE; a rule that changes the claim, support, organization, or readiness standard goes in STYLE; reader knowledge goes in AUDIENCE. Split mixed guidance without duplicating it.
+
+Write a voice lesson as observable behavior (how a sentence gathers, turns, qualifies, lands, or sounds false), never as an adjective like "warmer" or "more professional". Record the mechanism or consequence, not only a vague preference. Add a short sourced excerpt as evidence, never as a phrase to reuse (contract, section 6). Before a lesson goes to the shared repo's `voice/` files, which every project for every client loads, check the whole line (the rule text, the excerpt, `Source:`, and `Scope:`) for client-confidential details (client names, people's names, budgets, figures that aren't public) and swap in neutral labels such as "Client A" or "[budget]", keeping the sentence's shape; a client-named project gets a neutral source label too. This is the same check `/ckw:calibrate-voice` runs before it saves. A lesson that applies to one client belongs in that project's own `voice/` file, which may keep the client's details.
+
+**Classify each lesson before anything durable is written:**
+- **Explicit preference** — the user stated an enduring preference outright (in the session, a phase CONTEXT.md, or a STATE.md decision). An agent's own writing, such as a task summary's Key Decisions or a review finding, never counts as one.
+- **Repeated pattern** — supported by several examples you can name (the same correction across drafts, the same rule cited in several review findings).
+- **One-off** — a choice made for this piece only.
+- **Unconfirmed inference** — your reading of what the user would want; nobody has confirmed it.
+
+**Confirm before durable:**
+- Show every inference to the user for confirmation first. Save it only after a clear yes; it then counts as an explicit preference.
+- Never save a one-off as a rule. It stays with the piece. If the user says it is a standing rule after all, it becomes an explicit preference.
+- Solutions keep their own review flow (Steps 3-7). Voice, style, and audience lessons follow the rules here and in Step 4.
+- Unconfirmed lessons held by an earlier headless run (in STATE.md → Open Questions) come first. Remove each from there once the user confirms or drops it.
+
+**Where and how a lesson is filed:**
+- Append under the destination file's `## Confirmed lessons` heading, as one dated line with its source project: `- YYYY-MM-DD: [the rule, and the mechanism or consequence behind it]. Source: [project name].` Audience findings also add `Scope: [which readers or situations]`.
+- If the file has no `## Confirmed lessons` heading, add it at the end of the file.
+- Append only. Never edit or remove a rule already in the file. If a new lesson contradicts one, show both to the user and ask.
+- Ask whether the lesson holds for the whole organization (the shared repo's `voice/` file) or for this project only (the project's `voice/` file).
+
+**Iterate the rule, not the draft.** When a correction keeps coming back, the fix is a rule change in the right file, not another hand-edit of the draft. Capture the recurring correction as a lesson so the next draft gets it right the first time.
+
+**Headless runs** (rules in `commands/ckw/compound.md`, Pipeline Mode): file only explicit preferences the user recorded in STATE.md decisions or stated outright. A preference recorded only in a phase CONTEXT.md is never auto-filed as a project-wide or org voice rule; hold it as pending unless the same preference is also a STATE.md decision or the user stated it. Hold repeated patterns and inferences as pending for the next interactive run.
+
+**If there is no `voice/` folder** — neither in the project nor in a configured knowledge repo — routing works exactly as it does today (solutions library and `~/.ckw/SYSTEM.md`). Nothing is written to or created under `voice/`.
+
+*Routing model adapted from Every's compound-writing plugin (cw-save) by Katie Parrott (MIT license).*
 
 ### Step 3: Draft Solution Files
 
@@ -139,6 +186,8 @@ Solution 2: [Name]
 ```
 
 Only save solutions the user confirms.
+
+Voice, style, and audience lessons (Step 2b) come through this same review. For each, show the lesson exactly as it would be written, the file it goes to, and its class. Label inferences "My inference — not confirmed yet" and save them only on a clear yes. Label one-offs "Keeping with the piece — not saved as a rule" so the user can overrule you. For a lesson headed to the shared repo, show the cleaned excerpt, not the original.
 
 ### Step 5: Staleness Check
 
@@ -254,6 +303,11 @@ Compounding complete!
   • [Solution 2 name] (type) → docs/solutions/[file].md
 
 🔗 Promoted to shared repo: [count of promoted] of [total]
+
+(Only if a voice/ folder is in use:)
+Voice, style, and audience lessons filed: [count]
+  • [Lesson in a few words] → voice/[file].md
+Held for your confirmation: [count]
 
 These solutions will be surfaced by the planner when starting similar
 phases in future projects.
@@ -438,3 +492,5 @@ You can always run /ckw:compound later to capture additional learnings.
 - **Don't capture everything** — be selective. A solution should be reusable in a different project. Project-specific details are not solutions.
 - **Don't inflate confidence** — if a pattern worked once, it's "low" or "medium" confidence. Mark it "high" only if the user confirms it's a proven approach.
 - **Don't skip the user review** — every solution and every retrospective finding should be confirmed by the user before saving
+- **Don't save one-offs or unconfirmed lessons as rules** — voice, style, and audience files only get lessons the user stated or confirmed; a headless run holds the rest, and any preference recorded only in a phase CONTEXT.md, as pending
+- **Don't edit or remove rules already in a voice, style, or audience file** — append under `## Confirmed lessons`; ask before changing anything that's there

@@ -15,7 +15,7 @@ const path = require("path");
 const readline = require("readline");
 
 const PLUGIN_NAME = "compound-knowledge-work";
-const VERSION = "1.0.1";
+const VERSION = "1.1.0";
 const CKW_HOME = path.join(require("os").homedir(), ".ckw");
 
 // ─── Helpers ───────────────────────────────────────────────────────────────

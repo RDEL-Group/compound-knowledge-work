@@ -29,6 +29,14 @@ Run a quality check once drafts exist: `/ckw:review-phase 1`.
 
 The reviewer checks against your requirements and flags issues by severity — P1 (must fix), P2 (should fix), P3 (nice to fix). P1 issues get automatic revision plans; clear them with `/ckw:execute-phase 1 --revisions`.
 
+## Keeping a Consistent Voice
+
+When several people write for the same clients, drafts can start to sound like different companies. CKW can keep them in one voice.
+
+Your team's writing standards live in a `voice/` folder in the shared knowledge repo. Each teammate's CKW setup must point at that folder's home on their own computer (`~/.ckw/config.json` → `knowledge_repos`; the installer asks for it). To build the standards, run `/ckw:calibrate-voice` and hand over three to five finished documents you're proud of, such as the last Northwind report. You don't describe your style. CKW spots the habits in your writing, then writes a short paragraph in that voice. Tell it what's off and it fixes the rules, not just the paragraph. Nothing is saved until you've seen the whole file and said yes.
+
+After that it runs on its own. Planning picks the right files for each task, drafts follow them without comment, and the reviewer names the exact rule behind anything it flags. `/ckw:compound` shows you each writing lesson before saving it. No `voice/` folder? Nothing changes.
+
 ## Sharing for Feedback
 
 To get teammates involved: `/ckw:publish-proof --phase 1` publishes your drafts to Proof, a review space where colleagues can comment. Proof shows what AI wrote versus what a human edited, so everyone sees the provenance. To share the finished files instead, upload straight to Drive with `/ckw:drive upload drafts/proposal.md`.

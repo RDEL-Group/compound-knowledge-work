@@ -51,13 +51,15 @@ For each wave, execute tasks in the wave. Independent tasks within a wave CAN be
    - Nothing else — no conversation history, no other task outputs
    - This prevents context degradation across tasks
    - If a reference file listed in the task plan doesn't exist, warn the user and continue with available context: "Reference [path] not found — proceeding without it. Run /ckw:import-reference to add missing references."
+   - Voice and style files (VOICE.md, STYLE-*, AUDIENCE-*) are ordinary entries in that list when the plan includes them. Loading rules are in `docs/context-contract.md`, and the executor applies them silently (see `agents/ckw-executor.md`). A plan with no voice files runs exactly as before
+   - Before spawning, replace `[knowledge-repo]` in any listed path with this user's own `~/.ckw/config.json` → `knowledge_repos[0]`, and give the executor the resolved paths in the spawn message. A listed voice file that still can't be found is not an ordinary missing reference: tell the user "Voice file [path] not found, so this task would be drafted without your team's voice rules. Continue anyway, or fix the path first?" and wait for the answer. If the config has no `knowledge_repos` entry, say so and name that setting instead of reporting the file as not found
 
 2. **The executor agent:**
    a. Reads the task plan instructions
    b. Reads the specified reference materials
    c. Drafts the content according to instructions
    d. Saves output to the specified file in `drafts/`
-   e. Runs quality criteria self-check
+   e. Runs quality criteria self-check (plus the STYLE file's mechanical checks, when one was loaded)
    f. Flags any [ACTION REQUIRED] items
    g. Generates `{N}-SUMMARY.md` with:
       - What was produced
@@ -90,10 +92,10 @@ After all tasks in a wave complete (if wave has >1 task), perform a real coheren
 1. **Re-read each task's output alongside the others from this wave**
 2. **Check for contradictions** — do any drafts make claims that conflict with each other?
 3. **Check terminology consistency** — are the same concepts named the same way across drafts?
-4. **Check tone consistency** — do all drafts match the voice specified in CONTEXT.md?
+4. **Check tone consistency** — do all drafts match the voice specified in CONTEXT.md (and the loaded VOICE.md, if the tasks loaded one)?
 5. **Check for duplicated content** — did multiple tasks cover the same ground?
 
-If you find inconsistencies, fix them NOW before moving to the next wave — don't defer to the review phase. Small fixes now prevent compounding errors later.
+If you find inconsistencies, fix them NOW before moving to the next wave — don't defer to the review phase. Small fixes now prevent compounding errors later. Any draft you touch must still pass its STYLE file's mechanical checks.
 
 ### Step 5: Progress Report
 
@@ -131,6 +133,7 @@ The executor agent's full content quality rules, context discipline, output form
 - **Wave-by-wave execution:** Execute all waves sequentially without confirmation between waves. Do not pause for user input.
 - **Cross-task coherence check (Step 4):** Still runs. If inconsistencies are found, fix them automatically (same as interactive behavior).
 - **Missing references:** Log a warning and continue. Do not prompt for import.
+- **Voice and style files:** Passed to the executor and applied exactly as in interactive mode. No new prompts. A listed voice file that is missing after resolving `[knowledge-repo]` doesn't stop the run, but the executor records `Voice layer: not applied ([file] missing)` in its SUMMARY's Quality Self-Assessment, and the progress report lists it.
 - **ACTION REQUIRED items:** Flag them in SUMMARY files as normal, but do not prompt the user mid-execution.
 - **All file writes and git commits:** Proceed without confirmation.
 - **Progress report (Step 5):** Still generated with full details.

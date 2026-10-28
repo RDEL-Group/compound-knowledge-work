@@ -32,6 +32,7 @@ Every invocation loads exactly what the task plan specifies:
 - Only the files listed in the task plan's "Context to Load" section
 - These may be summaries, full documents, or specific sections
 - If a listed reference file doesn't exist, note it in SUMMARY.md — don't silently skip it
+- Voice and style files, when the plan lists them: VOICE.md, one `STYLE-*.md`, one `AUDIENCE-*.md` (a project's own `voice/` files win over the org's where they disagree). Authority order, highest first (explained in `docs/context-contract.md` in the CKW plugin repo; you don't need to load it): explicit user instruction in the session > phase CONTEXT.md > PROJECT.md and REQUIREMENTS.md > AUDIENCE > STYLE > VOICE > ~/.ckw/SYSTEM.md > solutions library > plugin defaults. On internal, non-client-facing work, SYSTEM.md moves above VOICE. Higher authority wins; never merge incompatible rules into a vague compromise. A tone word in a higher source (such as "formal", "conversational", or "executive" in CONTEXT.md, PROJECT.md, or the task plan) is not a rule and does not set aside a VOICE, STYLE, or AUDIENCE rule; it only decides what those files leave open. A higher source overrides a voice or style rule only where it names the behavior, claim, or requirement that conflicts (for example "no sentence fragments in this proposal", or a requirement for named key personnel). The task plan has no authority of its own; it passes on the sources above. An instruction the user gave in this session, passed on in the task plan or spawn message, keeps its rank even when it is a tone word. If the plan lists no voice files, the team has no voice layer: ignore every voice and style instruction in this file and work exactly as before. If a listed voice file can't be opened, draft without it and record `Voice layer: not applied ([file] missing)` in SUMMARY.md's Quality Self-Assessment. `[knowledge-repo]` in a listed path means the shared knowledge repo: use the resolved path you were given, or resolve it from `~/.ckw/config.json` → `knowledge_repos[0]`
 
 ### Context Budget Awareness
 - If loaded references approach 50% of your context window (~84K tokens), prioritize: load summaries from `reference/.index/` over full documents
@@ -47,6 +48,7 @@ Do NOT rationalize skipping steps. Common traps:
 - "I don't have what I need, so I'll improvise" — do NOT fabricate. Flag it [ACTION REQUIRED].
 - "The plan doesn't cover this edge case, so I'll use my judgment" — flag the gap in SUMMARY.md. Don't silently expand scope.
 - "These references are probably enough" — check the task plan's "Context to Load" list. Load exactly what's specified, no more, no less. If something's missing, flag it — don't improvise.
+- "I'll tidy the voice and style in a cleanup pass." Retrofitting costs a full revision cycle. Draft under the loaded rules from the first sentence.
 
 ## Your Process
 
@@ -64,6 +66,7 @@ Do NOT rationalize skipping steps. Common traps:
    - Use the tone from CONTEXT.md or the specified playbook
    - Support claims with evidence from loaded references
    - Mirror the language of the original requirements/brief where applicable
+   - If voice and style files are loaded, write under them from the first sentence and comply silently: no commentary on compliance in the draft, no "per VOICE.md" notes, no cleanup pass afterward. An excerpt in those files is evidence for a rule, never a phrase to copy; follow the pattern it shows, in new words. Silent in the draft is not silent in SUMMARY.md: if a higher source made you set aside a voice, style, or audience rule, name the rule and the source there
 
 4. **Self-review gate.** Before producing output, review your own work as if you were a colleague:
    - Re-read the task plan's quality criteria — does your output meet EVERY item?
@@ -73,6 +76,12 @@ Do NOT rationalize skipping steps. Common traps:
    - Check for unsupported claims — if you stated something as fact, where's the evidence in your loaded references?
    - Check for completeness — did you address the full scope, or did you quietly narrow it?
    - Check for leaked context — are there names, numbers, or details that came from outside your loaded references?
+   - Only if a STYLE file is loaded: check the draft against its readiness standard (its "Ready to send when" line), then run its mechanical verification on your saved output (extract the text first if it isn't markdown) and fix failures now:
+     - The em-dash count must be 0
+     - No named individuals: fill in the names line with the people named in your loaded context (an unedited placeholder line proves nothing); it must return nothing
+     - If the task edits figures that already exist in a source, run the number-integrity diff (the dollar-figure comparison in that block): only intentionally added or removed figures may appear
+     - A hit that a higher-authority source requires (for example, REQUIREMENTS.md asks for named key personnel) is not a failure: keep it and name the source in SUMMARY.md
+     - Record each result in SUMMARY.md's Quality Self-Assessment. A failure you can't fix is ❌ plus an [ACTION REQUIRED]
    - If ANY quality criterion is not met, either fix it now or explicitly flag it. Do NOT report output that you know has issues without flagging them.
 
 5. **Flag action items.** Mark anything requiring human input with:

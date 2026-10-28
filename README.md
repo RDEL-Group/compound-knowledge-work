@@ -1,7 +1,7 @@
 # Compound Knowledge Work (CKW)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
-[![Version](https://img.shields.io/badge/version-1.0.1-green.svg)](./CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-1.1.0-green.svg)](./CHANGELOG.md)
 
 A Claude Code plugin for knowledge work. CKW breaks complex projects — RFPs, proposals, SOPs, training materials, strategy docs, client reports — into executable phases, drafts them with consistent quality, and remembers what worked so your next project is faster and better than the last.
 
@@ -70,6 +70,7 @@ Run the same install command again. Your config and project registry are preserv
 | **Start** | `/ckw:new-project` | Scope a new project (from scratch or from a PRD) |
 | | `/ckw:adopt-project` | Import an existing project folder into CKW |
 | | `/ckw:import-reference` | Add reference documents (PDF, Word, etc.) |
+| | `/ckw:calibrate-voice` | Teach CKW your team's writing voice from real samples |
 | **Plan** | `/ckw:brainstorm` | Explore ideas before planning a phase |
 | | `/ckw:confidence` | Check what you know vs. what you're guessing |
 | | `/ckw:plan-phase` | Break a phase into executable tasks |
@@ -91,11 +92,15 @@ Run the same install command again. Your config and project registry are preserv
 
 Every command accepts `--headless`: it runs start to finish without interactive prompts, using sensible defaults. This makes CKW scriptable — chain commands, run them in CI, or schedule overnight jobs. Side-effecting steps fail closed (e.g., `/ckw:publish-proof --headless` refuses to publish without `--confirm-publish`, since publication is public and irreversible). Leave the flag off for normal interactive work.
 
+## Consistent Team Voice
+
+When several people write for the same clients, drafts can drift into different voices. CKW can load your team's writing standards into every draft. They live in your shared knowledge repo's `voice/` folder: one `VOICE.md` (how your sentences sound), one `STYLE-*.md` per document type (what it must prove and when it is ready to send), and one `AUDIENCE-*.md` per reader. Run `/ckw:calibrate-voice` on 3–5 finished deliverables and CKW works out your patterns, then shows a paragraph in that voice for you to react to. Nothing is saved until you approve it. The reviewer names the exact rule behind any drift it flags. No `voice/` folder, no change. Starter files are in `knowledge-repo-template/voice/`.
+
 ## Architecture
 
 CKW is a zero-dependency Claude Code plugin. Everything is markdown and vanilla Node.js:
 
-- **19 slash commands** (`commands/ckw/`) — markdown files that define the command interface
+- **20 slash commands** (`commands/ckw/`) — markdown files that define the command interface
 - **7 specialized agents** (`agents/`) — scoper, planner, executor, reviewer, stress-test reviewer, compounder, researcher
 - **5 skills** (`skills/`) — import/export, Google Workspace, Proof integration
 - **1 hook** (`hooks/`) — SessionStart project auto-detection (bundled via `hooks/hooks.json`)
@@ -155,6 +160,7 @@ CKW stands on the shoulders of several open-source projects:
 |---------|-----------------|
 | [Compound Engineering](https://github.com/EveryInc/compound-engineering-plugin) (Every, Inc.) | Core knowledge compounding concept |
 | [Compound Knowledge Plugin](https://github.com/EveryInc/compound-knowledge-plugin) (Every, Inc.) | Confidence check, pipeline mode, stale knowledge patterns |
+| [Compound Writing](https://github.com/EveryInc/compound-writing) (Katie Parrott / Every, Inc., MIT license) | Voice/style/audience context model, calibration approach, lesson routing |
 | [Superpowers](https://github.com/obra/superpowers) (obra) | Anti-rationalization, self-review gates, hard gates |
 | [CoworkPowers](https://github.com/nabeelhyatt/coworkpowers) (nabeelhyatt) | Stakes-based scaling, stress-test review |
 | [GSD](https://github.com/gsd-build/get-shit-done) (archived Jun 2026; successor [open-gsd/gsd-core](https://github.com/open-gsd/gsd-core)) | Phased execution, fresh context per task |
